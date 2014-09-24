@@ -18,6 +18,8 @@ namespace DART_Validation_Tool_DX
 	{
 		private ServerInfo osiServerInfo = null;
 		private ServerInfo gfsServerInfo = null;
+		private DataSeries oisDataSeries = null;
+		private DataSeries gfsDataSeries = null;
 		private Object semaphore;
 		public Form1()
 		{

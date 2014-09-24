@@ -8,21 +8,21 @@ using DevExpress.LookAndFeel;
 
 namespace DART_Validation_Tool_DX
 {
-    static class Program
-    {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+	static class Program
+	{
+		/// <summary>
+		/// The main entry point for the application.
+		/// </summary>
+		[STAThread]
+		static void Main()
+		{
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
 
-            BonusSkins.Register();
-            SkinManager.EnableFormSkins();
-            UserLookAndFeel.Default.SetSkinStyle("DevExpress Style");
-            Application.Run(new Form1());
-        }
-    }
+			BonusSkins.Register();
+			SkinManager.EnableFormSkins();
+			UserLookAndFeel.Default.SetSkinStyle("DevExpress Style");
+			Application.Run(new Form1());
+		}
+	}
 }

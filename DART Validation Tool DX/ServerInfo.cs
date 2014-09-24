@@ -6,37 +6,37 @@ using System.Threading.Tasks;
 
 namespace DART_Validation_Tool_DX
 {
-    public class ServerInfo
-    {
-        public string FullName { get; set; }
-        public string ShortName { get; set; }
-        public string OldShortName { get; set; } // Use when short name changes to support old links
-        public string ServiceName { get; set; }
+	public class ServerInfo
+	{
+		public string FullName { get; set; }
+		public string ShortName { get; set; }
+		public string OldShortName { get; set; } // Use when short name changes to support old links
+		public string ServiceName { get; set; }
 
-        public string WebServiceEndpointHint { get; set; }
-        public string WebServiceEndpoint
-        {
-            get
-            {
-                return WebServiceEndpointHint;
-            }
-        }
-        public string EnvironmentXml { get; set; }
-        public string DefaultMetric { get; set; }
+		public string WebServiceEndpointHint { get; set; }
+		public string WebServiceEndpoint
+		{
+			get
+			{
+				return WebServiceEndpointHint;
+			}
+		}
+		public string EnvironmentXml { get; set; }
+		public string DefaultMetric { get; set; }
 
-        public ServerInfo()
-        {
-        }
+		public ServerInfo()
+		{
+		}
 
-        public string GetFullRequestUrl(string relativeUrl, bool hasNoParams = true)
-        {
-            string fullUrl = WebServiceEndpoint + relativeUrl;
+		public string GetFullRequestUrl(string relativeUrl, bool hasNoParams = true)
+		{
+			string fullUrl = WebServiceEndpoint + relativeUrl;
 
-            if (!string.IsNullOrWhiteSpace(ServiceName))
-            {
-                fullUrl = fullUrl + (hasNoParams ? "?" : "&") + "serviceName=" + ServiceName;
-            }
-            return fullUrl;
-        }
-    }
+			if (!string.IsNullOrWhiteSpace(ServiceName))
+			{
+				fullUrl = fullUrl + (hasNoParams ? "?" : "&") + "serviceName=" + ServiceName;
+			}
+			return fullUrl;
+		}
+	}
 }

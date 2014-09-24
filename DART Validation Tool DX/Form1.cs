@@ -36,12 +36,21 @@ namespace DART_Validation_Tool_DX
             BeginGetMetrics(gfsServerInfo);
         }
 
-        public void BeginGetMetrics(ServerInfo server)
+        private void metricsBox_EditValueChanged(object sender, EventArgs e)
+        {
+            if(metricsBox.EditValue != null && gfsServerInfo != null){
+                BeginGetInstancesForMetric(gfsServerInfo, metricsBox.EditValue.ToString());
+            }
+        }
+
+        // Get metrics list from a server
+        private void BeginGetMetrics(ServerInfo server)
         {
             HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl("/metrics")) as HttpWebRequest;
             request.BeginGetResponse(EndGetMetrics, new GetMetricsRequest { HttpWebRequest = request });
         }
 
+        // update GUI for metrics list
         private void EndGetMetrics(IAsyncResult async)
         {
             GetMetricsRequest request = async.AsyncState as GetMetricsRequest;
@@ -53,7 +62,9 @@ namespace DART_Validation_Tool_DX
                 DataContractSerializer serializer = new DataContractSerializer(typeof(List<Metric>));
                 List<Metric> metrics = (List<Metric>)serializer.ReadObject(stream);
 
-                Invoke(new MethodInvoker(() => {
+                Invoke(new MethodInvoker(() =>
+                {
+                    (metricsBox.Edit as RepositoryItemComboBox).Items.Clear();
                     foreach (Metric metric in metrics)
                     {
                         (metricsBox.Edit as RepositoryItemComboBox).Items.Add(metric.Name);
@@ -67,11 +78,57 @@ namespace DART_Validation_Tool_DX
                 Console.WriteLine(e.ToString());
             }
         }
+
+        // private helper class
+        private class GetMetricsRequest
+        {
+            public HttpWebRequest HttpWebRequest { get; set; }
+        }
+
+        // Get instances list of a metrics
+        private void BeginGetInstancesForMetric(ServerInfo server, String metricName)
+        {
+            String url = "/instances?metric=" + metricName;
+            HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl(url)) as HttpWebRequest;
+            request.BeginGetResponse(EndGetInstancesForMetric, new GetInstancesRequest { HttpWebRequest = request });
+        }
+
+        // update GUI for instances list
+        private void EndGetInstancesForMetric(IAsyncResult async)
+        {
+            GetInstancesRequest request = async.AsyncState as GetInstancesRequest;
+            try
+            {
+                HttpWebResponse response = request.HttpWebRequest.EndGetResponse(async) as HttpWebResponse;
+                Stream stream = response.GetResponseStream();
+
+                DataContractSerializer serializer = new DataContractSerializer(typeof(List<Instance>));
+                List<Instance> instances = (List<Instance>)serializer.ReadObject(stream);
+
+                Invoke(new MethodInvoker(() =>
+                {
+                    (instancesBox.Edit as RepositoryItemComboBox).Items.Clear();
+                    foreach (Instance instance in instances)
+                    {
+                        (instancesBox.Edit as RepositoryItemComboBox).Items.Add(instance.Name);
+                    }
+                }));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        // private helper class
+        private class GetInstancesRequest
+        {
+            public HttpWebRequest HttpWebRequest { get; set; }
+            public Action<List<Instance>> Callback { get; set; }
+        }
+
     }
 
-    public class GetMetricsRequest
-    {
-        public HttpWebRequest HttpWebRequest { get; set; }
-    }
+
 
 }

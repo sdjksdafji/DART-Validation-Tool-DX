@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace DART_Validation_Tool_DX
 {
-    public partial class Form1 : DevExpress.XtraEditors.XtraForm
+    public partial class Form1 : DevExpress.XtraBars.Ribbon.RibbonForm
     {
         public Form1()
         {

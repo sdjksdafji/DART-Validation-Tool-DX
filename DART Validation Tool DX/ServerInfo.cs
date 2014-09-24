@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WindowsFormsApplication1
+namespace DART_Validation_Tool_DX
 {
     public class ServerInfo
     {

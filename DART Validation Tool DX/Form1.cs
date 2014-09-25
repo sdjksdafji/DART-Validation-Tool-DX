@@ -18,9 +18,9 @@ namespace DART_Validation_Tool_DX
 	{
 		private ServerInfo osiServerInfo = null;
 		private ServerInfo gfsServerInfo = null;
-		private DataSeries oisDataSeries = null;
-		private DataSeries gfsDataSeries = null;
-		private Object semaphore;
+		private List<DataSeries> osiDataSeries = null;
+		private List<DataSeries> gfsDataSeries = null;
+		private Object semaphore = new Object();
 		public Form1()
 		{
 			InitializeComponent();
@@ -52,6 +52,7 @@ namespace DART_Validation_Tool_DX
 			if (gfsServerInfo != null && osiServerInfo != null && metricsBox.EditValue != null && instancesBox.EditValue != null)
 			{
 				BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), false);
+				BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), true);
 			}
 		}
 
@@ -155,20 +156,42 @@ namespace DART_Validation_Tool_DX
 				Stream stream = response.GetResponseStream();
 
 				DataContractSerializer serializer = new DataContractSerializer(typeof(List<DataSeries>));
-				List<DataSeries> instances = (List<DataSeries>)serializer.ReadObject(stream);
+				List<DataSeries> dataSeriesList = (List<DataSeries>)serializer.ReadObject(stream);
 
 				Invoke(new MethodInvoker(() =>
 				{
-					//(instancesBox.Edit as RepositoryItemComboBox).Items.Clear();
-					//foreach (Instance instance in instances)
-					//{
-					//    (instancesBox.Edit as RepositoryItemComboBox).Items.Add(instance.Name);
-					//}
+					compareTwoDataSeries(dataSeriesList, request.isOsiDart);
 				}));
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.ToString());
+			}
+		}
+
+		private void compareTwoDataSeries(List<DataSeries> dataSeriesList, Boolean isOsiDart)
+		{
+			lock (this.semaphore)
+			{
+				if (isOsiDart)
+				{
+					this.osiDataSeries = dataSeriesList;
+					if (this.gfsDataSeries != null)
+					{
+						Console.WriteLine(this.osiDataSeries.ToString().Equals(this.gfsDataSeries.ToString()));
+
+						this.gfsDataSeries = null;
+						this.osiDataSeries = null;
+					}
+				}
+				else
+				{
+					this.gfsDataSeries = dataSeriesList;
+					if (this.osiDataSeries != null)
+					{
+
+					}
+				}
 			}
 		}
 

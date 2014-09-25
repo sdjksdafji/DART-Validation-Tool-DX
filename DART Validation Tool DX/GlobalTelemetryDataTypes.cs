@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Microsoft.Office.Web.Datacenter.Telemetry
 {
 
-    public class DataSeries
+	public class DataSeries : IEqualityComparer<DataSeries>
     {
         [DataMember]
         public DateTime StartTime { get; set; }
@@ -22,6 +22,51 @@ namespace Microsoft.Office.Web.Datacenter.Telemetry
 
         [DataMember]
         public double[] Values { get; set; }
+
+		public bool Equals(DataSeries x, DataSeries y)
+		{
+			//Check whether the objects are the same object.  
+			if (Object.ReferenceEquals(x, y)) return true;
+
+			//Check whether the objects' properties are equal.  
+			if (x.StartTime.Equals(y.StartTime) && x.EndTime.Equals(y.EndTime) && x.Interval.Equals(y.Interval))
+			{
+				if (x.Values == null && y.Values == null)
+				{
+					return true;
+				}
+				else
+				{
+					if (x.Values != null && y.Values != null && Enumerable.SequenceEqual(x.Values, y.Values))
+					{
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		public int GetHashCode(DataSeries ds)
+		{
+			return ds.GetHashCode();
+		}
+
+		public override String ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append("StartTime: ");
+			sb.AppendLine(StartTime.ToString());
+			sb.Append("EndTime: ");
+			sb.AppendLine(EndTime.ToString());
+			sb.Append("Interval: ");
+			sb.AppendLine(Interval.ToString());
+			sb.Append("Values: ");
+			foreach (double value in Values)
+			{
+				sb.AppendLine(value.ToString());
+			}
+			return sb.ToString();
+		}
     }
 
 

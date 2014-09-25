@@ -20,6 +20,8 @@ namespace DART_Validation_Tool_DX
 		private ServerInfo gfsServerInfo = null;
 		private List<DataSeries> osiDataSeries = null;
 		private List<DataSeries> gfsDataSeries = null;
+		private String osiData = null;
+		private String gfsData = null;
 		private Object semaphore = new Object();
 		public Form1()
 		{
@@ -28,15 +30,21 @@ namespace DART_Validation_Tool_DX
 
 		private void connectButton_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 		{
-			osiServerInfo = new ServerInfo();
-			osiServerInfo.FullName = (this.osiTextInput.EditValue).ToString();
-			osiServerInfo.WebServiceEndpointHint = "http://" + osiServerInfo.FullName;
+			if (this.osiTextInput.EditValue != null)
+			{
+				osiServerInfo = new ServerInfo();
+				osiServerInfo.FullName = (this.osiTextInput.EditValue).ToString();
+				osiServerInfo.WebServiceEndpointHint = "http://" + osiServerInfo.FullName;
+			}
 
-			gfsServerInfo = new ServerInfo();
-			gfsServerInfo.FullName = (this.gfsTextInput.EditValue).ToString();
-			gfsServerInfo.WebServiceEndpointHint = "http://" + gfsServerInfo.FullName;
+			if (this.gfsTextInput.EditValue != null)
+			{
+				gfsServerInfo = new ServerInfo();
+				gfsServerInfo.FullName = (this.gfsTextInput.EditValue).ToString();
+				gfsServerInfo.WebServiceEndpointHint = "http://" + gfsServerInfo.FullName;
 
-			BeginGetMetrics(gfsServerInfo);
+				BeginGetMetrics(gfsServerInfo);
+			}
 		}
 
 		private void metricsBox_EditValueChanged(object sender, EventArgs e)
@@ -55,6 +63,18 @@ namespace DART_Validation_Tool_DX
 				BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), true);
 			}
 		}
+
+		private void gfsTextInput_EditValueChanged(object sender, EventArgs e)
+		{
+			clearMetricsListAndInstancesList();
+		}
+
+
+		private void osiTextInput_EditValueChanged(object sender, EventArgs e)
+		{
+			clearMetricsListAndInstancesList();
+		}
+
 
 
 		// Get metrics list from a server
@@ -178,10 +198,7 @@ namespace DART_Validation_Tool_DX
 					this.osiDataSeries = dataSeriesList;
 					if (this.gfsDataSeries != null)
 					{
-						Console.WriteLine(this.osiDataSeries.ToString().Equals(this.gfsDataSeries.ToString()));
-
-						this.gfsDataSeries = null;
-						this.osiDataSeries = null;
+						displayResult();
 					}
 				}
 				else
@@ -189,10 +206,20 @@ namespace DART_Validation_Tool_DX
 					this.gfsDataSeries = dataSeriesList;
 					if (this.osiDataSeries != null)
 					{
-
+						displayResult();
 					}
 				}
 			}
+		}
+
+		private void displayResult()
+		{
+			this.osiData = this.osiDataSeries.DataSeriesListToString();
+			this.gfsData = this.gfsDataSeries.DataSeriesListToString();
+			Boolean match = osiData.Equals(gfsData);
+			DevExpress.XtraEditors.XtraMessageBox.Show(match ? "Match" : "Unmach", "Result", MessageBoxButtons.OK, match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+			this.gfsDataSeries = null;
+			this.osiDataSeries = null;
 		}
 
 		// private helper class
@@ -201,8 +228,28 @@ namespace DART_Validation_Tool_DX
 			public HttpWebRequest HttpWebRequest { get; set; }
 			public Boolean isOsiDart { get; set; }
 		}
+
+		private void clearMetricsListAndInstancesList()
+		{
+			(this.metricsBox.Edit as RepositoryItemComboBox).Items.Clear();
+			(this.instancesBox.Edit as RepositoryItemComboBox).Items.Clear();
+			this.osiServerInfo = null;
+			this.gfsServerInfo = null;
+		}
+
+
 	}
 
-
-
+	public static class DataSeriesListExtension
+	{
+		public static String DataSeriesListToString(this List<DataSeries> dataSeriesList)
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (DataSeries element in dataSeriesList)
+			{
+				sb.Append(element.ToString());
+			}
+			return sb.ToString();
+		}
+	}
 }

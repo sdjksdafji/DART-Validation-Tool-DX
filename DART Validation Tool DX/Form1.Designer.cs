@@ -92,6 +92,7 @@
 			this.gfsTextInput.Id = 2;
 			this.gfsTextInput.Name = "gfsTextInput";
 			this.gfsTextInput.Width = 150;
+			this.gfsTextInput.EditValueChanged += new System.EventHandler(this.gfsTextInput_EditValueChanged);
 			// 
 			// repositoryItemTextEdit1
 			// 
@@ -105,6 +106,7 @@
 			this.osiTextInput.Id = 4;
 			this.osiTextInput.Name = "osiTextInput";
 			this.osiTextInput.Width = 150;
+			this.osiTextInput.EditValueChanged += new System.EventHandler(this.osiTextInput_EditValueChanged);
 			// 
 			// repositoryItemTextEdit2
 			// 
@@ -118,8 +120,8 @@
 			this.connectButton.Id = 5;
 			this.connectButton.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("connectButton.LargeGlyph")));
 			this.connectButton.Name = "connectButton";
-			this.connectButton.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText)
-			| DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
+			this.connectButton.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText) 
+            | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
 			this.connectButton.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.connectButton_ItemClick);
 			// 
 			// metricsBox
@@ -159,8 +161,8 @@
 			this.barButtonItem1.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem1.Glyph")));
 			this.barButtonItem1.Id = 10;
 			this.barButtonItem1.Name = "barButtonItem1";
-			this.barButtonItem1.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText)
-			| DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
+			this.barButtonItem1.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText) 
+            | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
 			this.barButtonItem1.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem1_ItemClick);
 			// 
 			// ribbonPage1

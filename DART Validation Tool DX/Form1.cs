@@ -217,12 +217,13 @@ namespace DART_Validation_Tool_DX
 
 		private void displayResult()
 		{
-			this.osiData = this.osiDataSeries.DataSeriesListToString();
-			this.gfsData = this.gfsDataSeries.DataSeriesListToString();
+			//this.osiData = this.osiDataSeries.DataSeriesListToString();
+			//this.gfsData = this.gfsDataSeries.DataSeriesListToString();
 			List<Tuple<DateTime, String, String>> diffList = this.osiDataSeries.diffDataSeriesList(this.gfsDataSeries);
 			Boolean match = diffList.Count == 0;
 			DevExpress.XtraEditors.XtraMessageBox.Show(match ? "Match" : "Unmach", "Result", MessageBoxButtons.OK, match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
 			this.diffResult.DataSource = diffList;
+			LogInfo.WriteComparisonToLog(this.osiTextInput.EditValue.ToString(), this.gfsTextInput.EditValue.ToString(), diffList, this.osiDataSeries.First().Values.Length, this.gfsDataSeries.First().Values.Length);
 			this.gfsDataSeries = null;
 			this.osiDataSeries = null;
 		}
@@ -298,28 +299,35 @@ namespace DART_Validation_Tool_DX
 					var iterGfs = gfsDataSeries.GetEnumerator();
 					iterOsi.MoveNext();
 					iterGfs.MoveNext();
-					while(true){
+					while (true)
+					{
 						if (iterOsi.Current == null || iterGfs.Current == null)
 						{
-							while(iterGfs.Current!=null){
-								diffList.Add(new Tuple<DateTime,string,string>(iterGfs.Current.Item1, iterGfs.Current.Item2, "null"));
+							while (iterGfs.Current != null)
+							{
+								diffList.Add(new Tuple<DateTime, string, string>(iterGfs.Current.Item1, iterGfs.Current.Item2, "null"));
 								iterGfs.MoveNext();
 							}
-							while(iterOsi.Current!=null){
-								diffList.Add(new Tuple<DateTime,string,string>(iterOsi.Current.Item1, "null", iterOsi.Current.Item2));
+							while (iterOsi.Current != null)
+							{
+								diffList.Add(new Tuple<DateTime, string, string>(iterOsi.Current.Item1, "null", iterOsi.Current.Item2));
 								iterOsi.MoveNext();
 							}
 							break;
 						}
 						else
 						{
-							if(iterOsi.Current.Item1.Equals(iterGfs.Current.Item1)){
-								if(!iterOsi.Current.Item2.Equals(iterGfs.Current.Item2)){
-									diffList.Add(new Tuple<DateTime,string,string>(iterOsi.Current.Item1, iterGfs.Current.Item2, iterOsi.Current.Item2));
+							if (iterOsi.Current.Item1.Equals(iterGfs.Current.Item1))
+							{
+								if (!iterOsi.Current.Item2.Equals(iterGfs.Current.Item2))
+								{
+									diffList.Add(new Tuple<DateTime, string, string>(iterOsi.Current.Item1, iterGfs.Current.Item2, iterOsi.Current.Item2));
 								}
 								iterGfs.MoveNext();
 								iterOsi.MoveNext();
-							}else{
+							}
+							else
+							{
 								if (iterOsi.Current.Item1 < iterGfs.Current.Item1)
 								{
 									diffList.Add(new Tuple<DateTime, string, string>(iterOsi.Current.Item1, "null", iterOsi.Current.Item2));
@@ -344,7 +352,33 @@ namespace DART_Validation_Tool_DX
 	{
 		public static void WriteComparisonToLog(String osiServerName, String gfsServerName, List<Tuple<DateTime, String, String>> diffList, int osiCount, int gfsCount)
 		{
+			String path = @"log";
+			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+			path += @"\log.txt";
+			// This text is always added, making the file longer over time 
+			// if it is not deleted. 
+			using (StreamWriter sw = File.AppendText(path))
+			{
+				if (diffList.Count == 0)
+				{
+					sw.WriteLine("-- Matched --: " + osiCount + " instances in " + gfsServerName + " and " + osiServerName);
+				}
+				else
+				{
+					sw.WriteLine("!! Unmatched !!: " + diffList.Count + " instances in " + gfsServerName + " and " + osiServerName);
+					sw.WriteLine("\tSamples:");
+					int i = 0;
+					foreach (Tuple<DateTime, String, String> tuple in diffList)
+					{
+						sw.WriteLine("\tTime: " + tuple.Item1 + "\t" + gfsServerName + ": " + tuple.Item2 + "\t" + osiServerName + ": " + tuple.Item3);
+						if (++i >= 5)
+						{
+							break;
+						}
+					}
+				}
 
+			}
 		}
 	}
 }

@@ -274,9 +274,9 @@
 		private DevExpress.XtraEditors.Repository.RepositoryItemComboBox repositoryItemComboBox3;
 		private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupValidate;
 		private DevExpress.XtraBars.BarButtonItem barButtonItem1;
-		private DevExpress.XtraVerticalGrid.VGridControl diffResult;
 		public DevExpress.XtraBars.BarEditItem gfsTextInput;
 		public DevExpress.XtraBars.BarEditItem osiTextInput;
+		public DevExpress.XtraVerticalGrid.VGridControl diffResult;
 
 	}
 }

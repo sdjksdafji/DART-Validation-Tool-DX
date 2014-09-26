@@ -14,6 +14,7 @@ using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraRichEdit;
 using DevExpress.XtraRichEdit.API.Native;
 using System.Collections;
+using DevExpress.XtraEditors.Controls;
 
 namespace DART_Validation_Tool_DX
 {
@@ -58,11 +59,29 @@ namespace DART_Validation_Tool_DX
 
 		private void barButtonItem1_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 		{
-			CompareDataSeires compareDataSeires = new CompareDataSeires();
+
 			if (gfsServerInfo != null && osiServerInfo != null && metricsBox.EditValue != null && instancesBox.EditValue != null)
 			{
-				compareDataSeires.BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), false, this);
-				compareDataSeires.BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), true, this);
+				if (instancesBox.EditValue.ToString().Equals("All Instances"))
+				{
+					ComboBoxItemCollection instances = (instancesBox.Edit as RepositoryItemComboBox).Items;
+					foreach (var item in instances)
+					{
+						if (item.ToString().Equals("All Instances")) continue;
+						GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
+						compareDataSeires.isAllInstances = true;
+						compareDataSeires.BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), item.ToString(), false, this);
+						compareDataSeires.BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), item.ToString(), true, this);
+					}
+					Console.WriteLine("all");
+				}
+				else
+				{
+					GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
+					compareDataSeires.isAllInstances = false;
+					compareDataSeires.BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), false, this);
+					compareDataSeires.BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), true, this);
+				}
 			}
 		}
 
@@ -247,11 +266,14 @@ namespace DART_Validation_Tool_DX
 		}
 	}
 
-	public class CompareDataSeires
+	public class GetAndCompareDataSeires
 	{
+		public Boolean isAllInstances { get; set; }
+
 		private List<DataSeries> osiDataSeries = null;
 		private List<DataSeries> gfsDataSeries = null;
 		private Object semaphore = new Object();
+
 
 		// private helper class
 		private class GetInstancesRequest
@@ -263,7 +285,7 @@ namespace DART_Validation_Tool_DX
 		{
 			String url = "/dataseries?key=" + metricName + "!" + instanceName;
 			HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl(url)) as HttpWebRequest;
-			request.BeginGetResponse(EndGetDataSeries, new GetDataSeriesRequest { HttpWebRequest = request, isOsiDart = isOsiDart, control = control });
+			request.BeginGetResponse(EndGetDataSeries, new GetDataSeriesRequest { HttpWebRequest = request, isOsiDart = isOsiDart, control = control, key = "Metric: " + metricName + " Instance: " + instanceName });
 		}
 
 		private void EndGetDataSeries(IAsyncResult async)
@@ -279,7 +301,7 @@ namespace DART_Validation_Tool_DX
 
 				request.control.Invoke(new MethodInvoker(() =>
 				{
-					compareTwoDataSeries(dataSeriesList, request.isOsiDart, request.control);
+					compareTwoDataSeries(dataSeriesList, request.isOsiDart, request.control, request.key);
 				}));
 			}
 			catch (Exception e)
@@ -288,7 +310,7 @@ namespace DART_Validation_Tool_DX
 			}
 		}
 
-		private void compareTwoDataSeries(List<DataSeries> dataSeriesList, Boolean isOsiDart,Form1 control)
+		private void compareTwoDataSeries(List<DataSeries> dataSeriesList, Boolean isOsiDart, Form1 control, String key)
 		{
 			lock (this.semaphore)
 			{
@@ -297,7 +319,7 @@ namespace DART_Validation_Tool_DX
 					this.osiDataSeries = dataSeriesList;
 					if (this.gfsDataSeries != null)
 					{
-						displayResult(control);
+						displayResult(control, key);
 					}
 				}
 				else
@@ -305,20 +327,24 @@ namespace DART_Validation_Tool_DX
 					this.gfsDataSeries = dataSeriesList;
 					if (this.osiDataSeries != null)
 					{
-						displayResult(control);
+						displayResult(control, key);
 					}
 				}
 			}
 		}
 
-		private void displayResult(Form1 control)
+		private void displayResult(Form1 control, String key)
 		{
 			//this.osiData = this.osiDataSeries.DataSeriesListToString();
 			//this.gfsData = this.gfsDataSeries.DataSeriesListToString();
 			List<Tuple<DateTime, String, String>> diffList = this.osiDataSeries.diffDataSeriesList(this.gfsDataSeries);
 			Boolean match = diffList.Count == 0;
-			DevExpress.XtraEditors.XtraMessageBox.Show(match ? "Match" : "Unmach", "Result", MessageBoxButtons.OK, match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-			LogInfo.WriteComparisonToLog(control.osiTextInput.EditValue.ToString(), control.gfsTextInput.EditValue.ToString(), diffList, this.osiDataSeries.First().Values.Length, this.gfsDataSeries.First().Values.Length);
+			if (!this.isAllInstances)
+			{
+				DevExpress.XtraEditors.XtraMessageBox.Show(match ? "Match" : "Unmach", "Result", MessageBoxButtons.OK, match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+				control.diffResult.DataSource = diffList;
+			}
+			LogInfo.WriteComparisonToLog(key, control.osiTextInput.EditValue.ToString(), control.gfsTextInput.EditValue.ToString(), diffList, this.osiDataSeries.First().Values.Length, this.gfsDataSeries.First().Values.Length);
 			this.gfsDataSeries = null;
 			this.osiDataSeries = null;
 		}
@@ -328,15 +354,15 @@ namespace DART_Validation_Tool_DX
 		{
 			public HttpWebRequest HttpWebRequest { get; set; }
 			public Boolean isOsiDart { get; set; }
-
 			public Form1 control { get; set; }
+			public String key { get; set; }
 		}
 	}
 
 	public static class LogInfo
 	{
 		private static Object logLock = new Object();
-		public static void WriteComparisonToLog(String osiServerName, String gfsServerName, List<Tuple<DateTime, String, String>> diffList, int osiCount, int gfsCount)
+		public static void WriteComparisonToLog(String key, String osiServerName, String gfsServerName, List<Tuple<DateTime, String, String>> diffList, int osiCount, int gfsCount)
 		{
 			String path = @"log";
 			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
@@ -349,11 +375,11 @@ namespace DART_Validation_Tool_DX
 				{
 					if (diffList.Count == 0)
 					{
-						sw.WriteLine("-- Matched --: " + osiCount + " data in " + gfsServerName + " and " + osiServerName);
+						sw.WriteLine("-- Matched --: { key = " + key + "}\t" + osiCount + " data in " + gfsServerName + " and " + osiServerName);
 					}
 					else
 					{
-						sw.WriteLine("!! Unmatched !!: " + diffList.Count + " data in " + gfsServerName + " and " + osiServerName);
+						sw.WriteLine("!! Unmatched !!: { key = " + key + "}\t" + diffList.Count + " data in " + gfsServerName + " and " + osiServerName);
 						sw.WriteLine("\tSamples:");
 						int i = 0;
 						foreach (Tuple<DateTime, String, String> tuple in diffList)

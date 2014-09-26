@@ -339,4 +339,12 @@ namespace DART_Validation_Tool_DX
 			return null;
 		}
 	}
+
+	public static class LogInfo
+	{
+		public static void WriteComparisonToLog(String osiServerName, String gfsServerName, List<Tuple<DateTime, String, String>> diffList, int osiCount, int gfsCount)
+		{
+
+		}
+	}
 }

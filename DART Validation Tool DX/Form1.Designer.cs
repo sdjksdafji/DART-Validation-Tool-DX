@@ -48,6 +48,7 @@
 			this.repositoryItemCheckEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit();
 			this.repositoryItemComboBox1 = new DevExpress.XtraEditors.Repository.RepositoryItemComboBox();
 			this.repositoryItemLookUpEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemLookUpEdit();
+			this.diffResult = new DevExpress.XtraVerticalGrid.VGridControl();
 			((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit2)).BeginInit();
@@ -56,6 +57,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemCheckEdit1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemComboBox1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemLookUpEdit1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.diffResult)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// ribbonControl1
@@ -221,11 +223,21 @@
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
 			this.repositoryItemLookUpEdit1.Name = "repositoryItemLookUpEdit1";
 			// 
+			// diffResult
+			// 
+			this.diffResult.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.diffResult.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.diffResult.Location = new System.Drawing.Point(0, 144);
+			this.diffResult.Name = "diffResult";
+			this.diffResult.Size = new System.Drawing.Size(602, 210);
+			this.diffResult.TabIndex = 3;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(602, 354);
+			this.Controls.Add(this.diffResult);
 			this.Controls.Add(this.ribbonControl1);
 			this.Name = "Form1";
 			this.Ribbon = this.ribbonControl1;
@@ -238,6 +250,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemCheckEdit1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemComboBox1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemLookUpEdit1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.diffResult)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -263,6 +276,7 @@
 		private DevExpress.XtraEditors.Repository.RepositoryItemComboBox repositoryItemComboBox3;
 		private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupValidate;
 		private DevExpress.XtraBars.BarButtonItem barButtonItem1;
+		private DevExpress.XtraVerticalGrid.VGridControl diffResult;
 
 	}
 }

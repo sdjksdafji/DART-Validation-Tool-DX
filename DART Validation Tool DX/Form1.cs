@@ -11,6 +11,9 @@ using System.IO;
 using System.Runtime.Serialization;
 using Microsoft.Office.Web.Datacenter.Telemetry;
 using DevExpress.XtraEditors.Repository;
+using DevExpress.XtraRichEdit;
+using DevExpress.XtraRichEdit.API.Native;
+using System.Collections;
 
 namespace DART_Validation_Tool_DX
 {
@@ -216,8 +219,10 @@ namespace DART_Validation_Tool_DX
 		{
 			this.osiData = this.osiDataSeries.DataSeriesListToString();
 			this.gfsData = this.gfsDataSeries.DataSeriesListToString();
-			Boolean match = osiData.Equals(gfsData);
+			List<Tuple<DateTime, String, String>> diffList = this.osiDataSeries.diffDataSeriesList(this.gfsDataSeries);
+			Boolean match = diffList.Count == 0;
 			DevExpress.XtraEditors.XtraMessageBox.Show(match ? "Match" : "Unmach", "Result", MessageBoxButtons.OK, match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+			this.diffResult.DataSource = diffList;
 			this.gfsDataSeries = null;
 			this.osiDataSeries = null;
 		}
@@ -237,6 +242,34 @@ namespace DART_Validation_Tool_DX
 			this.gfsServerInfo = null;
 		}
 
+		//private void DisplayInDiffEditor(String osiData, String gfsData)
+		//{
+		//	this.diffEdit.Document.Text = "";
+		//	diff_match_patch d = new diff_match_patch();
+		//	List<Diff> diffList= d.diff_main(osiData, gfsData);
+		//	foreach (Diff element in diffList)
+		//	{
+		//		if (element.text.Length > 100) continue;
+		//		var richText = new RichEditDocumentServer();
+		//		richText.Text = element.text;
+		//		CharacterProperties cp = richText.Document.BeginUpdateCharacters(richText.Document.Range);
+		//		if (element.operation == Operation.EQUAL)
+		//		{
+
+		//		}
+		//		else if (element.operation == Operation.DELETE)
+		//		{
+		//			cp.BackColor = Color.Red;
+		//		}
+		//		else if (element.operation == Operation.INSERT)
+		//		{
+		//			cp.BackColor = Color.Yellow;
+		//		}
+		//		richText.Document.EndUpdateCharacters(cp);
+
+		//		this.diffEdit.Document.AppendDocumentContent(richText.Document.Range);
+		//	}
+		//}
 
 	}
 
@@ -250,6 +283,60 @@ namespace DART_Validation_Tool_DX
 				sb.Append(element.ToString());
 			}
 			return sb.ToString();
+		}
+
+		public static List<Tuple<DateTime, String, String>> diffDataSeriesList(this List<DataSeries> osiDataSeriesList, List<DataSeries> gfsDataSeriesList)
+		{
+			if (osiDataSeriesList != null && gfsDataSeriesList != null)
+			{
+				List<Tuple<DateTime, String>> osiDataSeries = osiDataSeriesList.First().ToTupleList();
+				List<Tuple<DateTime, String>> gfsDataSeries = gfsDataSeriesList.First().ToTupleList();
+				if (osiDataSeries != null && gfsDataSeries != null)
+				{
+					List<Tuple<DateTime, String, String>> diffList = new List<Tuple<DateTime, String, String>>();
+					var iterOsi = osiDataSeries.GetEnumerator();
+					var iterGfs = gfsDataSeries.GetEnumerator();
+					iterOsi.MoveNext();
+					iterGfs.MoveNext();
+					while(true){
+						if (iterOsi.Current == null || iterGfs.Current == null)
+						{
+							while(iterGfs.Current!=null){
+								diffList.Add(new Tuple<DateTime,string,string>(iterGfs.Current.Item1, iterGfs.Current.Item2, "null"));
+								iterGfs.MoveNext();
+							}
+							while(iterOsi.Current!=null){
+								diffList.Add(new Tuple<DateTime,string,string>(iterOsi.Current.Item1, "null", iterOsi.Current.Item2));
+								iterOsi.MoveNext();
+							}
+							break;
+						}
+						else
+						{
+							if(iterOsi.Current.Item1.Equals(iterGfs.Current.Item1)){
+								if(!iterOsi.Current.Item2.Equals(iterGfs.Current.Item2)){
+									diffList.Add(new Tuple<DateTime,string,string>(iterOsi.Current.Item1, iterGfs.Current.Item2, iterOsi.Current.Item2));
+								}
+								iterGfs.MoveNext();
+								iterOsi.MoveNext();
+							}else{
+								if (iterOsi.Current.Item1 < iterGfs.Current.Item1)
+								{
+									diffList.Add(new Tuple<DateTime, string, string>(iterOsi.Current.Item1, "null", iterOsi.Current.Item2));
+									iterOsi.MoveNext();
+								}
+								else
+								{
+									diffList.Add(new Tuple<DateTime, string, string>(iterGfs.Current.Item1, iterGfs.Current.Item2, "null"));
+									iterGfs.MoveNext();
+								}
+							}
+						}
+					}
+					return diffList;
+				}
+			}
+			return null;
 		}
 	}
 }

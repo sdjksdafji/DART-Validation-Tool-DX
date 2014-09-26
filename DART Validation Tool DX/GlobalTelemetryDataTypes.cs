@@ -53,19 +53,34 @@ namespace Microsoft.Office.Web.Datacenter.Telemetry
 
 		public override String ToString()
 		{
+			DateTime currentTime = new DateTime(StartTime.Ticks);
 			StringBuilder sb = new StringBuilder();
-			sb.Append("StartTime: ");
-			sb.AppendLine(StartTime.ToString());
-			sb.Append("EndTime: ");
-			sb.AppendLine(EndTime.ToString());
-			sb.Append("Interval: ");
-			sb.AppendLine(Interval.ToString());
-			sb.Append("Values: ");
+			//sb.Append("StartTime: ");
+			//sb.AppendLine(StartTime.ToString());
+			//sb.Append("EndTime: ");
+			//sb.AppendLine(EndTime.ToString());
+			//sb.Append("Interval: ");
+			//sb.AppendLine(Interval.ToString());
+			sb.AppendLine("Values: ");
 			foreach (double value in Values)
 			{
+				sb.Append(currentTime.ToString());
+				sb.Append(": ");
 				sb.AppendLine(value.ToString());
+				currentTime = currentTime.Add(this.Interval);
 			}
 			return sb.ToString();
+		}
+
+		public List<Tuple<DateTime, String>> ToTupleList(){
+			List<Tuple<DateTime, String>> returnVal = new List<Tuple<DateTime, String>>();
+			DateTime currentTime = new DateTime(StartTime.Ticks);
+			foreach (double value in Values)
+			{
+				returnVal.Add(new Tuple<DateTime, String>(new DateTime(currentTime.Ticks), value.ToString()));
+				currentTime = currentTime.Add(this.Interval);
+			}
+			return returnVal;
 		}
     }
 

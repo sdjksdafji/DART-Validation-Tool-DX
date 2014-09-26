@@ -259,9 +259,7 @@
 
 		private DevExpress.XtraBars.Ribbon.RibbonControl ribbonControl1;
 		private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage1;
-		private DevExpress.XtraBars.BarEditItem gfsTextInput;
 		private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemTextEdit1;
-		private DevExpress.XtraBars.BarEditItem osiTextInput;
 		private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemTextEdit2;
 		private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupServerInfo;
 		private DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit repositoryItemCheckEdit1;
@@ -277,6 +275,8 @@
 		private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupValidate;
 		private DevExpress.XtraBars.BarButtonItem barButtonItem1;
 		private DevExpress.XtraVerticalGrid.VGridControl diffResult;
+		public DevExpress.XtraBars.BarEditItem gfsTextInput;
+		public DevExpress.XtraBars.BarEditItem osiTextInput;
 
 	}
 }

@@ -23,8 +23,6 @@ namespace DART_Validation_Tool_DX
 		private ServerInfo gfsServerInfo = null;
 		private List<DataSeries> osiDataSeries = null;
 		private List<DataSeries> gfsDataSeries = null;
-		private String osiData = null;
-		private String gfsData = null;
 		private Object semaphore = new Object();
 		public Form1()
 		{
@@ -60,10 +58,11 @@ namespace DART_Validation_Tool_DX
 
 		private void barButtonItem1_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 		{
+			CompareDataSeires compareDataSeires = new CompareDataSeires();
 			if (gfsServerInfo != null && osiServerInfo != null && metricsBox.EditValue != null && instancesBox.EditValue != null)
 			{
-				BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), false);
-				BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), true);
+				compareDataSeires.BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), false, this);
+				compareDataSeires.BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), true, this);
 			}
 		}
 
@@ -145,6 +144,7 @@ namespace DART_Validation_Tool_DX
 				Invoke(new MethodInvoker(() =>
 				{
 					(instancesBox.Edit as RepositoryItemComboBox).Items.Clear();
+					(instancesBox.Edit as RepositoryItemComboBox).Items.Add("All Instances");
 					foreach (Instance instance in instances)
 					{
 						(instancesBox.Edit as RepositoryItemComboBox).Items.Add(instance.Name);
@@ -163,78 +163,6 @@ namespace DART_Validation_Tool_DX
 			public HttpWebRequest HttpWebRequest { get; set; }
 		}
 
-		private void BeginGetDataSeries(ServerInfo server, String metricName, String instanceName, Boolean isOsiDart)
-		{
-			String url = "/dataseries?key=" + metricName + "!" + instanceName;
-			HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl(url)) as HttpWebRequest;
-			request.BeginGetResponse(EndGetDataSeries, new GetDataSeriesRequest { HttpWebRequest = request, isOsiDart = isOsiDart });
-		}
-
-		private void EndGetDataSeries(IAsyncResult async)
-		{
-			GetDataSeriesRequest request = async.AsyncState as GetDataSeriesRequest;
-			try
-			{
-				HttpWebResponse response = request.HttpWebRequest.EndGetResponse(async) as HttpWebResponse;
-				Stream stream = response.GetResponseStream();
-
-				DataContractSerializer serializer = new DataContractSerializer(typeof(List<DataSeries>));
-				List<DataSeries> dataSeriesList = (List<DataSeries>)serializer.ReadObject(stream);
-
-				Invoke(new MethodInvoker(() =>
-				{
-					compareTwoDataSeries(dataSeriesList, request.isOsiDart);
-				}));
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.ToString());
-			}
-		}
-
-		private void compareTwoDataSeries(List<DataSeries> dataSeriesList, Boolean isOsiDart)
-		{
-			lock (this.semaphore)
-			{
-				if (isOsiDart)
-				{
-					this.osiDataSeries = dataSeriesList;
-					if (this.gfsDataSeries != null)
-					{
-						displayResult();
-					}
-				}
-				else
-				{
-					this.gfsDataSeries = dataSeriesList;
-					if (this.osiDataSeries != null)
-					{
-						displayResult();
-					}
-				}
-			}
-		}
-
-		private void displayResult()
-		{
-			//this.osiData = this.osiDataSeries.DataSeriesListToString();
-			//this.gfsData = this.gfsDataSeries.DataSeriesListToString();
-			List<Tuple<DateTime, String, String>> diffList = this.osiDataSeries.diffDataSeriesList(this.gfsDataSeries);
-			Boolean match = diffList.Count == 0;
-			DevExpress.XtraEditors.XtraMessageBox.Show(match ? "Match" : "Unmach", "Result", MessageBoxButtons.OK, match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-			this.diffResult.DataSource = diffList;
-			LogInfo.WriteComparisonToLog(this.osiTextInput.EditValue.ToString(), this.gfsTextInput.EditValue.ToString(), diffList, this.osiDataSeries.First().Values.Length, this.gfsDataSeries.First().Values.Length);
-			this.gfsDataSeries = null;
-			this.osiDataSeries = null;
-		}
-
-		// private helper class
-		private class GetDataSeriesRequest
-		{
-			public HttpWebRequest HttpWebRequest { get; set; }
-			public Boolean isOsiDart { get; set; }
-		}
-
 		private void clearMetricsListAndInstancesList()
 		{
 			(this.metricsBox.Edit as RepositoryItemComboBox).Items.Clear();
@@ -242,35 +170,6 @@ namespace DART_Validation_Tool_DX
 			this.osiServerInfo = null;
 			this.gfsServerInfo = null;
 		}
-
-		//private void DisplayInDiffEditor(String osiData, String gfsData)
-		//{
-		//	this.diffEdit.Document.Text = "";
-		//	diff_match_patch d = new diff_match_patch();
-		//	List<Diff> diffList= d.diff_main(osiData, gfsData);
-		//	foreach (Diff element in diffList)
-		//	{
-		//		if (element.text.Length > 100) continue;
-		//		var richText = new RichEditDocumentServer();
-		//		richText.Text = element.text;
-		//		CharacterProperties cp = richText.Document.BeginUpdateCharacters(richText.Document.Range);
-		//		if (element.operation == Operation.EQUAL)
-		//		{
-
-		//		}
-		//		else if (element.operation == Operation.DELETE)
-		//		{
-		//			cp.BackColor = Color.Red;
-		//		}
-		//		else if (element.operation == Operation.INSERT)
-		//		{
-		//			cp.BackColor = Color.Yellow;
-		//		}
-		//		richText.Document.EndUpdateCharacters(cp);
-
-		//		this.diffEdit.Document.AppendDocumentContent(richText.Document.Range);
-		//	}
-		//}
 
 	}
 
@@ -348,8 +247,95 @@ namespace DART_Validation_Tool_DX
 		}
 	}
 
+	public class CompareDataSeires
+	{
+		private List<DataSeries> osiDataSeries = null;
+		private List<DataSeries> gfsDataSeries = null;
+		private Object semaphore = new Object();
+
+		// private helper class
+		private class GetInstancesRequest
+		{
+			public HttpWebRequest HttpWebRequest { get; set; }
+		}
+
+		public void BeginGetDataSeries(ServerInfo server, String metricName, String instanceName, Boolean isOsiDart, Form1 control)
+		{
+			String url = "/dataseries?key=" + metricName + "!" + instanceName;
+			HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl(url)) as HttpWebRequest;
+			request.BeginGetResponse(EndGetDataSeries, new GetDataSeriesRequest { HttpWebRequest = request, isOsiDart = isOsiDart, control = control });
+		}
+
+		private void EndGetDataSeries(IAsyncResult async)
+		{
+			GetDataSeriesRequest request = async.AsyncState as GetDataSeriesRequest;
+			try
+			{
+				HttpWebResponse response = request.HttpWebRequest.EndGetResponse(async) as HttpWebResponse;
+				Stream stream = response.GetResponseStream();
+
+				DataContractSerializer serializer = new DataContractSerializer(typeof(List<DataSeries>));
+				List<DataSeries> dataSeriesList = (List<DataSeries>)serializer.ReadObject(stream);
+
+				request.control.Invoke(new MethodInvoker(() =>
+				{
+					compareTwoDataSeries(dataSeriesList, request.isOsiDart, request.control);
+				}));
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.ToString());
+			}
+		}
+
+		private void compareTwoDataSeries(List<DataSeries> dataSeriesList, Boolean isOsiDart,Form1 control)
+		{
+			lock (this.semaphore)
+			{
+				if (isOsiDart)
+				{
+					this.osiDataSeries = dataSeriesList;
+					if (this.gfsDataSeries != null)
+					{
+						displayResult(control);
+					}
+				}
+				else
+				{
+					this.gfsDataSeries = dataSeriesList;
+					if (this.osiDataSeries != null)
+					{
+						displayResult(control);
+					}
+				}
+			}
+		}
+
+		private void displayResult(Form1 control)
+		{
+			//this.osiData = this.osiDataSeries.DataSeriesListToString();
+			//this.gfsData = this.gfsDataSeries.DataSeriesListToString();
+			List<Tuple<DateTime, String, String>> diffList = this.osiDataSeries.diffDataSeriesList(this.gfsDataSeries);
+			Boolean match = diffList.Count == 0;
+			DevExpress.XtraEditors.XtraMessageBox.Show(match ? "Match" : "Unmach", "Result", MessageBoxButtons.OK, match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+			LogInfo.WriteComparisonToLog(control.osiTextInput.EditValue.ToString(), control.gfsTextInput.EditValue.ToString(), diffList, this.osiDataSeries.First().Values.Length, this.gfsDataSeries.First().Values.Length);
+			this.gfsDataSeries = null;
+			this.osiDataSeries = null;
+		}
+
+		// private helper class
+		private class GetDataSeriesRequest
+		{
+			public HttpWebRequest HttpWebRequest { get; set; }
+			public Boolean isOsiDart { get; set; }
+
+			public Form1 control { get; set; }
+		}
+	}
+
 	public static class LogInfo
 	{
+		private static Object logLock = new Object();
 		public static void WriteComparisonToLog(String osiServerName, String gfsServerName, List<Tuple<DateTime, String, String>> diffList, int osiCount, int gfsCount)
 		{
 			String path = @"log";
@@ -357,27 +343,29 @@ namespace DART_Validation_Tool_DX
 			path += @"\log.txt";
 			// This text is always added, making the file longer over time 
 			// if it is not deleted. 
-			using (StreamWriter sw = File.AppendText(path))
+			lock (logLock)
 			{
-				if (diffList.Count == 0)
+				using (StreamWriter sw = File.AppendText(path))
 				{
-					sw.WriteLine("-- Matched --: " + osiCount + " instances in " + gfsServerName + " and " + osiServerName);
-				}
-				else
-				{
-					sw.WriteLine("!! Unmatched !!: " + diffList.Count + " instances in " + gfsServerName + " and " + osiServerName);
-					sw.WriteLine("\tSamples:");
-					int i = 0;
-					foreach (Tuple<DateTime, String, String> tuple in diffList)
+					if (diffList.Count == 0)
 					{
-						sw.WriteLine("\tTime: " + tuple.Item1 + "\t" + gfsServerName + ": " + tuple.Item2 + "\t" + osiServerName + ": " + tuple.Item3);
-						if (++i >= 5)
+						sw.WriteLine("-- Matched --: " + osiCount + " data in " + gfsServerName + " and " + osiServerName);
+					}
+					else
+					{
+						sw.WriteLine("!! Unmatched !!: " + diffList.Count + " data in " + gfsServerName + " and " + osiServerName);
+						sw.WriteLine("\tSamples:");
+						int i = 0;
+						foreach (Tuple<DateTime, String, String> tuple in diffList)
 						{
-							break;
+							sw.WriteLine("\tTime: " + tuple.Item1 + "\t" + gfsServerName + ": " + tuple.Item2 + " instances\t" + osiServerName + ": " + tuple.Item3 + " instances");
+							if (++i >= 5)
+							{
+								break;
+							}
 						}
 					}
 				}
-
 			}
 		}
 	}

@@ -435,7 +435,7 @@ namespace DART_Validation_Tool_DX
 					else
 					{
 						sw.WriteLine("!! Unmatched !!: { key = " + key + "}\t" + diffList.Count + " data in " + gfsServerName + " and " + osiServerName);
-						sw.WriteLine("\tSamples:");
+						sw.WriteLine("\tSamples (up to 5):");
 						int i = 0;
 						foreach (Tuple<DateTime, String, String> tuple in diffList)
 						{

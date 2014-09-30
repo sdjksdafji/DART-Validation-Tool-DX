@@ -79,6 +79,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalTelemetryDataTypes.cs" />
+    <Compile Include="LogWritter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerInfo.cs" />

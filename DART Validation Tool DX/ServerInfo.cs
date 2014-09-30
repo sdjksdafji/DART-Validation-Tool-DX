@@ -24,9 +24,12 @@ namespace DART_Validation_Tool_DX
 		public string EnvironmentXml { get; set; }
 		public string DefaultMetric { get; set; }
 
-		public ServerInfo()
+		public ServerInfo(String FullName)
 		{
+			this.FullName = FullName;
+			this.WebServiceEndpointHint = "http://" + this.FullName;
 		}
+
 
 		public string GetFullRequestUrl(string relativeUrl, bool hasNoParams = true)
 		{

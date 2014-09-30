@@ -62,16 +62,12 @@ namespace DART_Validation_Tool_DX
 		{
 			if (this.osiTextInput.EditValue != null)
 			{
-				osiServerInfo = new ServerInfo();
-				osiServerInfo.FullName = (this.osiTextInput.EditValue).ToString();
-				osiServerInfo.WebServiceEndpointHint = "http://" + osiServerInfo.FullName;
+				osiServerInfo = new ServerInfo((this.osiTextInput.EditValue).ToString());
 			}
 
 			if (this.gfsTextInput.EditValue != null)
 			{
-				gfsServerInfo = new ServerInfo();
-				gfsServerInfo.FullName = (this.gfsTextInput.EditValue).ToString();
-				gfsServerInfo.WebServiceEndpointHint = "http://" + gfsServerInfo.FullName;
+				gfsServerInfo = new ServerInfo((this.gfsTextInput.EditValue).ToString());
 
 				BeginGetMetrics(gfsServerInfo);
 			}

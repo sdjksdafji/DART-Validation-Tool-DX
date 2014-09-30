@@ -29,15 +29,15 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGuiForm));
-			DevExpress.XtraCharts.SimpleDiagram3D simpleDiagram3D1 = new DevExpress.XtraCharts.SimpleDiagram3D();
-			DevExpress.XtraCharts.Series series1 = new DevExpress.XtraCharts.Series();
-			DevExpress.XtraCharts.Pie3DSeriesLabel pie3DSeriesLabel1 = new DevExpress.XtraCharts.Pie3DSeriesLabel();
-			DevExpress.XtraCharts.PiePointOptions piePointOptions1 = new DevExpress.XtraCharts.PiePointOptions();
-			DevExpress.XtraCharts.Pie3DSeriesView pie3DSeriesView1 = new DevExpress.XtraCharts.Pie3DSeriesView();
-			DevExpress.XtraCharts.Pie3DSeriesLabel pie3DSeriesLabel2 = new DevExpress.XtraCharts.Pie3DSeriesLabel();
-			DevExpress.XtraCharts.PiePointOptions piePointOptions2 = new DevExpress.XtraCharts.PiePointOptions();
-			DevExpress.XtraCharts.Pie3DSeriesView pie3DSeriesView2 = new DevExpress.XtraCharts.Pie3DSeriesView();
-			DevExpress.XtraCharts.ChartTitle chartTitle1 = new DevExpress.XtraCharts.ChartTitle();
+			DevExpress.XtraCharts.SimpleDiagram3D simpleDiagram3D2 = new DevExpress.XtraCharts.SimpleDiagram3D();
+			DevExpress.XtraCharts.Series series2 = new DevExpress.XtraCharts.Series();
+			DevExpress.XtraCharts.Pie3DSeriesLabel pie3DSeriesLabel3 = new DevExpress.XtraCharts.Pie3DSeriesLabel();
+			DevExpress.XtraCharts.PiePointOptions piePointOptions3 = new DevExpress.XtraCharts.PiePointOptions();
+			DevExpress.XtraCharts.Pie3DSeriesView pie3DSeriesView3 = new DevExpress.XtraCharts.Pie3DSeriesView();
+			DevExpress.XtraCharts.Pie3DSeriesLabel pie3DSeriesLabel4 = new DevExpress.XtraCharts.Pie3DSeriesLabel();
+			DevExpress.XtraCharts.PiePointOptions piePointOptions4 = new DevExpress.XtraCharts.PiePointOptions();
+			DevExpress.XtraCharts.Pie3DSeriesView pie3DSeriesView4 = new DevExpress.XtraCharts.Pie3DSeriesView();
+			DevExpress.XtraCharts.ChartTitle chartTitle2 = new DevExpress.XtraCharts.ChartTitle();
 			this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
 			this.gfsTextInput = new DevExpress.XtraBars.BarEditItem();
 			this.repositoryItemTextEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
@@ -69,12 +69,12 @@
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemLookUpEdit1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.diffResult)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.resultChart)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(simpleDiagram3D1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(series1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel2)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView2)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(simpleDiagram3D2)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(series2)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel3)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView3)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel4)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView4)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// ribbonControl1
@@ -251,32 +251,32 @@
 			// 
 			// resultChart
 			// 
-			simpleDiagram3D1.RotationMatrixSerializable = "1;0;0;0;0;0.5;-0.866025403784439;0;0;0.866025403784439;0.5;0;0;0;0;1";
-			this.resultChart.Diagram = simpleDiagram3D1;
+			simpleDiagram3D2.RotationMatrixSerializable = "1;0;0;0;0;0.5;-0.866025403784439;0;0;0.866025403784439;0.5;0;0;0;0;1";
+			this.resultChart.Diagram = simpleDiagram3D2;
 			this.resultChart.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.resultChart.Location = new System.Drawing.Point(0, 144);
 			this.resultChart.Name = "resultChart";
-			piePointOptions1.ValueNumericOptions.Format = DevExpress.XtraCharts.NumericFormat.Percent;
-			pie3DSeriesLabel1.PointOptions = piePointOptions1;
-			series1.Label = pie3DSeriesLabel1;
-			series1.Name = "Series 1";
-			pie3DSeriesView1.SizeAsPercentage = 100D;
-			series1.View = pie3DSeriesView1;
+			piePointOptions3.ValueNumericOptions.Format = DevExpress.XtraCharts.NumericFormat.Percent;
+			pie3DSeriesLabel3.PointOptions = piePointOptions3;
+			series2.Label = pie3DSeriesLabel3;
+			series2.Name = "Series 1";
+			pie3DSeriesView3.SizeAsPercentage = 100D;
+			series2.View = pie3DSeriesView3;
 			this.resultChart.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
-        series1};
-			piePointOptions2.ValueNumericOptions.Format = DevExpress.XtraCharts.NumericFormat.General;
-			pie3DSeriesLabel2.PointOptions = piePointOptions2;
-			this.resultChart.SeriesTemplate.Label = pie3DSeriesLabel2;
-			pie3DSeriesView2.SizeAsPercentage = 100D;
-			this.resultChart.SeriesTemplate.View = pie3DSeriesView2;
+        series2};
+			piePointOptions4.ValueNumericOptions.Format = DevExpress.XtraCharts.NumericFormat.General;
+			pie3DSeriesLabel4.PointOptions = piePointOptions4;
+			this.resultChart.SeriesTemplate.Label = pie3DSeriesLabel4;
+			pie3DSeriesView4.SizeAsPercentage = 100D;
+			this.resultChart.SeriesTemplate.View = pie3DSeriesView4;
 			this.resultChart.Size = new System.Drawing.Size(602, 210);
 			this.resultChart.TabIndex = 5;
-			chartTitle1.Text = "Validation Result";
+			chartTitle2.Text = "Validation Result";
 			this.resultChart.Titles.AddRange(new DevExpress.XtraCharts.ChartTitle[] {
-            chartTitle1});
+            chartTitle2});
 			this.resultChart.Visible = false;
 			// 
-			// Form1
+			// MainGuiForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -284,7 +284,7 @@
 			this.Controls.Add(this.resultChart);
 			this.Controls.Add(this.diffResult);
 			this.Controls.Add(this.ribbonControl1);
-			this.Name = "Form1";
+			this.Name = "MainGuiForm";
 			this.Ribbon = this.ribbonControl1;
 			this.Text = "DART Validation Tool";
 			((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).EndInit();
@@ -296,12 +296,12 @@
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemComboBox1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemLookUpEdit1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.diffResult)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(simpleDiagram3D1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(series1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel2)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView2)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(simpleDiagram3D2)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel3)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView3)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(series2)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel4)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView4)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.resultChart)).EndInit();
 			this.ResumeLayout(false);
 
@@ -320,9 +320,7 @@
 		private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupMetricsAndInstances;
 		private DevExpress.XtraEditors.Repository.RepositoryItemComboBox repositoryItemComboBox1;
 		private DevExpress.XtraEditors.Repository.RepositoryItemLookUpEdit repositoryItemLookUpEdit1;
-		private DevExpress.XtraBars.BarEditItem metricsBox;
 		private DevExpress.XtraEditors.Repository.RepositoryItemComboBox repositoryItemComboBox2;
-		private DevExpress.XtraBars.BarEditItem instancesBox;
 		private DevExpress.XtraEditors.Repository.RepositoryItemComboBox repositoryItemComboBox3;
 		private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroupValidate;
 		private DevExpress.XtraBars.BarButtonItem barButtonItem1;
@@ -330,6 +328,8 @@
 		public DevExpress.XtraBars.BarEditItem osiTextInput;
 		public DevExpress.XtraVerticalGrid.VGridControl diffResult;
 		private DevExpress.XtraCharts.ChartControl resultChart;
+		public DevExpress.XtraBars.BarEditItem metricsBox;
+		public DevExpress.XtraBars.BarEditItem instancesBox;
 
 	}
 }

@@ -72,6 +72,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DiffAlgorithmExtension.cs" />
+    <Compile Include="GlobalTelemetryClientWrapper.cs" />
     <Compile Include="MainGuiForm.cs">
       <SubType>Form</SubType>
     </Compile>

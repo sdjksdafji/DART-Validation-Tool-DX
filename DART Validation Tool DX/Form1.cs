@@ -108,8 +108,7 @@ namespace DART_Validation_Tool_DX
 						compareDataSeires.BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), item.ToString(), false, this);
 						compareDataSeires.BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), item.ToString(), true, this);
 					}
-					Console.WriteLine("all");
-				}
+					Console.WriteLine("all");}
 				else
 				{
 					this.resultChart.Visible = false;

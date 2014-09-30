@@ -19,7 +19,7 @@ using DevExpress.XtraCharts;
 
 namespace DART_Validation_Tool_DX
 {
-	public partial class Form1 : DevExpress.XtraBars.Ribbon.RibbonForm
+	public partial class MainGuiForm : DevExpress.XtraBars.Ribbon.RibbonForm
 	{
 		private ServerInfo osiServerInfo = null;
 		private ServerInfo gfsServerInfo = null;
@@ -27,7 +27,7 @@ namespace DART_Validation_Tool_DX
 		private long numUnmathed = 0;
 		private Object statSemaphore = new Object();
 		private Object semaphore = new Object();
-		public Form1()
+		public MainGuiForm()
 		{
 			InitializeComponent();
 		}
@@ -330,7 +330,7 @@ namespace DART_Validation_Tool_DX
 			public HttpWebRequest HttpWebRequest { get; set; }
 		}
 
-		public void BeginGetDataSeries(ServerInfo server, String metricName, String instanceName, Boolean isOsiDart, Form1 control)
+		public void BeginGetDataSeries(ServerInfo server, String metricName, String instanceName, Boolean isOsiDart, MainGuiForm control)
 		{
 			String url = "/dataseries?key=" + metricName + "!" + instanceName;
 			HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl(url)) as HttpWebRequest;
@@ -360,7 +360,7 @@ namespace DART_Validation_Tool_DX
 			}
 		}
 
-		private void compareTwoDataSeries(List<DataSeries> dataSeriesList, Boolean isOsiDart, Form1 control, String key)
+		private void compareTwoDataSeries(List<DataSeries> dataSeriesList, Boolean isOsiDart, MainGuiForm control, String key)
 		{
 			lock (this.semaphore)
 			{
@@ -383,7 +383,7 @@ namespace DART_Validation_Tool_DX
 			}
 		}
 
-		private void displayResult(Form1 control, String key)
+		private void displayResult(MainGuiForm control, String key)
 		{
 			//this.osiData = this.osiDataSeries.DataSeriesListToString();
 			//this.gfsData = this.gfsDataSeries.DataSeriesListToString();
@@ -408,7 +408,7 @@ namespace DART_Validation_Tool_DX
 		{
 			public HttpWebRequest HttpWebRequest { get; set; }
 			public Boolean isOsiDart { get; set; }
-			public Form1 control { get; set; }
+			public MainGuiForm control { get; set; }
 			public String key { get; set; }
 		}
 	}

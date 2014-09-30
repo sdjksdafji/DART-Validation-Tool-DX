@@ -22,7 +22,7 @@ namespace DART_Validation_Tool_DX
 			BonusSkins.Register();
 			SkinManager.EnableFormSkins();
 			UserLookAndFeel.Default.SetSkinStyle("DevExpress Style");
-			Application.Run(new Form1());
+			Application.Run(new MainGuiForm());
 		}
 	}
 }

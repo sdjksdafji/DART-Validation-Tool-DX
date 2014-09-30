@@ -55,12 +55,6 @@ namespace Microsoft.Office.Web.Datacenter.Telemetry
 		{
 			DateTime currentTime = new DateTime(StartTime.Ticks);
 			StringBuilder sb = new StringBuilder();
-			//sb.Append("StartTime: ");
-			//sb.AppendLine(StartTime.ToString());
-			//sb.Append("EndTime: ");
-			//sb.AppendLine(EndTime.ToString());
-			//sb.Append("Interval: ");
-			//sb.AppendLine(Interval.ToString());
 			sb.AppendLine("Values: ");
 			foreach (double value in Values)
 			{

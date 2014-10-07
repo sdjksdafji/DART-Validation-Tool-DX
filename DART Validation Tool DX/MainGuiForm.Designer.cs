@@ -29,15 +29,15 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainGuiForm));
-			DevExpress.XtraCharts.SimpleDiagram3D simpleDiagram3D2 = new DevExpress.XtraCharts.SimpleDiagram3D();
-			DevExpress.XtraCharts.Series series2 = new DevExpress.XtraCharts.Series();
-			DevExpress.XtraCharts.Pie3DSeriesLabel pie3DSeriesLabel3 = new DevExpress.XtraCharts.Pie3DSeriesLabel();
-			DevExpress.XtraCharts.PiePointOptions piePointOptions3 = new DevExpress.XtraCharts.PiePointOptions();
-			DevExpress.XtraCharts.Pie3DSeriesView pie3DSeriesView3 = new DevExpress.XtraCharts.Pie3DSeriesView();
-			DevExpress.XtraCharts.Pie3DSeriesLabel pie3DSeriesLabel4 = new DevExpress.XtraCharts.Pie3DSeriesLabel();
-			DevExpress.XtraCharts.PiePointOptions piePointOptions4 = new DevExpress.XtraCharts.PiePointOptions();
-			DevExpress.XtraCharts.Pie3DSeriesView pie3DSeriesView4 = new DevExpress.XtraCharts.Pie3DSeriesView();
-			DevExpress.XtraCharts.ChartTitle chartTitle2 = new DevExpress.XtraCharts.ChartTitle();
+			DevExpress.XtraCharts.SimpleDiagram3D simpleDiagram3D3 = new DevExpress.XtraCharts.SimpleDiagram3D();
+			DevExpress.XtraCharts.Series series3 = new DevExpress.XtraCharts.Series();
+			DevExpress.XtraCharts.Pie3DSeriesLabel pie3DSeriesLabel5 = new DevExpress.XtraCharts.Pie3DSeriesLabel();
+			DevExpress.XtraCharts.PiePointOptions piePointOptions5 = new DevExpress.XtraCharts.PiePointOptions();
+			DevExpress.XtraCharts.Pie3DSeriesView pie3DSeriesView5 = new DevExpress.XtraCharts.Pie3DSeriesView();
+			DevExpress.XtraCharts.Pie3DSeriesLabel pie3DSeriesLabel6 = new DevExpress.XtraCharts.Pie3DSeriesLabel();
+			DevExpress.XtraCharts.PiePointOptions piePointOptions6 = new DevExpress.XtraCharts.PiePointOptions();
+			DevExpress.XtraCharts.Pie3DSeriesView pie3DSeriesView6 = new DevExpress.XtraCharts.Pie3DSeriesView();
+			DevExpress.XtraCharts.ChartTitle chartTitle3 = new DevExpress.XtraCharts.ChartTitle();
 			this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
 			this.gfsTextInput = new DevExpress.XtraBars.BarEditItem();
 			this.repositoryItemTextEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
@@ -57,8 +57,10 @@
 			this.repositoryItemCheckEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit();
 			this.repositoryItemComboBox1 = new DevExpress.XtraEditors.Repository.RepositoryItemComboBox();
 			this.repositoryItemLookUpEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemLookUpEdit();
-			this.diffResult = new DevExpress.XtraVerticalGrid.VGridControl();
 			this.resultChart = new DevExpress.XtraCharts.ChartControl();
+			this.MainSplitContainerControl = new DevExpress.XtraEditors.SplitContainerControl();
+			this.diffResult = new DevExpress.XtraVerticalGrid.VGridControl();
+			this.MatchResult = new DevExpress.XtraVerticalGrid.VGridControl();
 			((System.ComponentModel.ISupportInitialize)(this.ribbonControl1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEdit2)).BeginInit();
@@ -67,14 +69,17 @@
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemCheckEdit1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemComboBox1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemLookUpEdit1)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.diffResult)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.resultChart)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(simpleDiagram3D2)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(series2)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel3)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView3)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel4)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView4)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(simpleDiagram3D3)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(series3)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel5)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView5)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel6)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView6)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.MainSplitContainerControl)).BeginInit();
+			this.MainSplitContainerControl.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.diffResult)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.MatchResult)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// ribbonControl1
@@ -111,7 +116,7 @@
 			this.gfsTextInput.Id = 2;
 			this.gfsTextInput.Name = "gfsTextInput";
 			this.gfsTextInput.Width = 150;
-			this.gfsTextInput.EditValueChanged += new System.EventHandler(this.gfsTextInput_EditValueChanged);
+			this.gfsTextInput.EditValueChanged += new System.EventHandler(this.GfsTextInputEditValueChanged);
 			// 
 			// repositoryItemTextEdit1
 			// 
@@ -125,7 +130,7 @@
 			this.osiTextInput.Id = 4;
 			this.osiTextInput.Name = "osiTextInput";
 			this.osiTextInput.Width = 150;
-			this.osiTextInput.EditValueChanged += new System.EventHandler(this.osiTextInput_EditValueChanged);
+			this.osiTextInput.EditValueChanged += new System.EventHandler(this.OsiTextInputEditValueChanged);
 			// 
 			// repositoryItemTextEdit2
 			// 
@@ -141,7 +146,7 @@
 			this.connectButton.Name = "connectButton";
 			this.connectButton.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText) 
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
-			this.connectButton.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.connectButton_ItemClick);
+			this.connectButton.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.ConnectButton_ItemClick);
 			// 
 			// metricsBox
 			// 
@@ -150,7 +155,7 @@
 			this.metricsBox.Id = 8;
 			this.metricsBox.Name = "metricsBox";
 			this.metricsBox.Width = 150;
-			this.metricsBox.EditValueChanged += new System.EventHandler(this.metricsBox_EditValueChanged);
+			this.metricsBox.EditValueChanged += new System.EventHandler(this.MetricsBox_EditValueChanged);
 			// 
 			// repositoryItemComboBox2
 			// 
@@ -182,7 +187,7 @@
 			this.barButtonItem1.Name = "barButtonItem1";
 			this.barButtonItem1.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText) 
             | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
-			this.barButtonItem1.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem1_ItemClick);
+			this.barButtonItem1.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.BarButtonItem1_ItemClick);
 			// 
 			// ribbonPage1
 			// 
@@ -240,49 +245,73 @@
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
 			this.repositoryItemLookUpEdit1.Name = "repositoryItemLookUpEdit1";
 			// 
+			// resultChart
+			// 
+			simpleDiagram3D3.RotationMatrixSerializable = "1;0;0;0;0;0.5;-0.866025403784439;0;0;0.866025403784439;0.5;0;0;0;0;1";
+			this.resultChart.Diagram = simpleDiagram3D3;
+			this.resultChart.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.resultChart.Location = new System.Drawing.Point(0, 144);
+			this.resultChart.Name = "resultChart";
+			piePointOptions5.ValueNumericOptions.Format = DevExpress.XtraCharts.NumericFormat.Percent;
+			pie3DSeriesLabel5.PointOptions = piePointOptions5;
+			series3.Label = pie3DSeriesLabel5;
+			series3.Name = "Series 1";
+			pie3DSeriesView5.SizeAsPercentage = 100D;
+			series3.View = pie3DSeriesView5;
+			this.resultChart.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
+        series3};
+			piePointOptions6.ValueNumericOptions.Format = DevExpress.XtraCharts.NumericFormat.General;
+			pie3DSeriesLabel6.PointOptions = piePointOptions6;
+			this.resultChart.SeriesTemplate.Label = pie3DSeriesLabel6;
+			pie3DSeriesView6.SizeAsPercentage = 100D;
+			this.resultChart.SeriesTemplate.View = pie3DSeriesView6;
+			this.resultChart.Size = new System.Drawing.Size(602, 210);
+			this.resultChart.TabIndex = 5;
+			chartTitle3.Text = "Validation Result";
+			this.resultChart.Titles.AddRange(new DevExpress.XtraCharts.ChartTitle[] {
+            chartTitle3});
+			this.resultChart.Visible = false;
+			// 
+			// MainSplitContainerControl
+			// 
+			this.MainSplitContainerControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MainSplitContainerControl.Location = new System.Drawing.Point(0, 144);
+			this.MainSplitContainerControl.Name = "MainSplitContainerControl";
+			this.MainSplitContainerControl.Panel1.Controls.Add(this.MatchResult);
+			this.MainSplitContainerControl.Panel1.Text = "Panel1";
+			this.MainSplitContainerControl.Panel2.Controls.Add(this.diffResult);
+			this.MainSplitContainerControl.Panel2.Text = "Panel2";
+			this.MainSplitContainerControl.Size = new System.Drawing.Size(602, 210);
+			this.MainSplitContainerControl.SplitterPosition = 304;
+			this.MainSplitContainerControl.TabIndex = 8;
+			this.MainSplitContainerControl.Text = "MainSplitContainerControl";
+			// 
 			// diffResult
 			// 
 			this.diffResult.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.diffResult.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.diffResult.Location = new System.Drawing.Point(0, 144);
+			this.diffResult.LayoutStyle = DevExpress.XtraVerticalGrid.LayoutViewStyle.SingleRecordView;
+			this.diffResult.Location = new System.Drawing.Point(0, 0);
 			this.diffResult.Name = "diffResult";
-			this.diffResult.Size = new System.Drawing.Size(602, 210);
-			this.diffResult.TabIndex = 3;
+			this.diffResult.Size = new System.Drawing.Size(293, 210);
+			this.diffResult.TabIndex = 4;
 			// 
-			// resultChart
+			// MatchResult
 			// 
-			simpleDiagram3D2.RotationMatrixSerializable = "1;0;0;0;0;0.5;-0.866025403784439;0;0;0.866025403784439;0.5;0;0;0;0;1";
-			this.resultChart.Diagram = simpleDiagram3D2;
-			this.resultChart.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.resultChart.Location = new System.Drawing.Point(0, 144);
-			this.resultChart.Name = "resultChart";
-			piePointOptions3.ValueNumericOptions.Format = DevExpress.XtraCharts.NumericFormat.Percent;
-			pie3DSeriesLabel3.PointOptions = piePointOptions3;
-			series2.Label = pie3DSeriesLabel3;
-			series2.Name = "Series 1";
-			pie3DSeriesView3.SizeAsPercentage = 100D;
-			series2.View = pie3DSeriesView3;
-			this.resultChart.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
-        series2};
-			piePointOptions4.ValueNumericOptions.Format = DevExpress.XtraCharts.NumericFormat.General;
-			pie3DSeriesLabel4.PointOptions = piePointOptions4;
-			this.resultChart.SeriesTemplate.Label = pie3DSeriesLabel4;
-			pie3DSeriesView4.SizeAsPercentage = 100D;
-			this.resultChart.SeriesTemplate.View = pie3DSeriesView4;
-			this.resultChart.Size = new System.Drawing.Size(602, 210);
-			this.resultChart.TabIndex = 5;
-			chartTitle2.Text = "Validation Result";
-			this.resultChart.Titles.AddRange(new DevExpress.XtraCharts.ChartTitle[] {
-            chartTitle2});
-			this.resultChart.Visible = false;
+			this.MatchResult.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MatchResult.LayoutStyle = DevExpress.XtraVerticalGrid.LayoutViewStyle.SingleRecordView;
+			this.MatchResult.Location = new System.Drawing.Point(0, 0);
+			this.MatchResult.Name = "MatchResult";
+			this.MatchResult.Size = new System.Drawing.Size(304, 210);
+			this.MatchResult.TabIndex = 8;
 			// 
 			// MainGuiForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(602, 354);
+			this.Controls.Add(this.MainSplitContainerControl);
 			this.Controls.Add(this.resultChart);
-			this.Controls.Add(this.diffResult);
 			this.Controls.Add(this.ribbonControl1);
 			this.Name = "MainGuiForm";
 			this.Ribbon = this.ribbonControl1;
@@ -295,14 +324,17 @@
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemCheckEdit1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemComboBox1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.repositoryItemLookUpEdit1)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.diffResult)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(simpleDiagram3D2)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel3)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView3)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(series2)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel4)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView4)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(simpleDiagram3D3)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel5)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView5)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(series3)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesLabel6)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(pie3DSeriesView6)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.resultChart)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.MainSplitContainerControl)).EndInit();
+			this.MainSplitContainerControl.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.diffResult)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.MatchResult)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -326,10 +358,12 @@
 		private DevExpress.XtraBars.BarButtonItem barButtonItem1;
 		public DevExpress.XtraBars.BarEditItem gfsTextInput;
 		public DevExpress.XtraBars.BarEditItem osiTextInput;
-		public DevExpress.XtraVerticalGrid.VGridControl diffResult;
 		private DevExpress.XtraCharts.ChartControl resultChart;
 		public DevExpress.XtraBars.BarEditItem metricsBox;
 		public DevExpress.XtraBars.BarEditItem instancesBox;
+		private DevExpress.XtraEditors.SplitContainerControl MainSplitContainerControl;
+		public DevExpress.XtraVerticalGrid.VGridControl MatchResult;
+		public DevExpress.XtraVerticalGrid.VGridControl diffResult;
 
 	}
 }

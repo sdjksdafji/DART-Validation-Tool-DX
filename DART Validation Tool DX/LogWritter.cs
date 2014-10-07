@@ -17,10 +17,11 @@ namespace DART_Validation_Tool_DX
 			String path = @"log";
 			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 			path += @"\log.txt";
-			return path;}
+			return path;
+		}
 
-		public static void WriteComparisonToLog(String key, String osiServerName, String gfsServerName,
-			List<Tuple<DateTime, String, String>> diffList, int osiCount, int gfsCount)
+		public static void WriteComparisonToLog(String key, String osiServerName, String gfsServerName, List<Tuple<DateTime, String, String>> matchList,
+			List<Tuple<DateTime, String, String>> diffList, List<Tuple<DateTime, String, String>> missList, int osiCount, int gfsCount)
 		{
 			String path = GetLogPath();
 			// This text is always added, making the file longer over time 
@@ -31,12 +32,12 @@ namespace DART_Validation_Tool_DX
 				{
 					if (diffList.Count == 0)
 					{
-						sw.WriteLine("-- Matched --: { key = " + key + "}\t" + osiCount + " data in " + gfsServerName + " and " +
+						sw.WriteLine("-- Matched --: { key = " + key + "}\t" + "With " + missList.Count + "missing\t" + osiCount + " data in " + gfsServerName + " and " +
 									 osiServerName);
 					}
 					else
 					{
-						sw.WriteLine("!! Unmatched !!: { key = " + key + "}\t" + diffList.Count + " data in " + gfsServerName + " and " +
+						sw.WriteLine("!! Unmatched !!: { key = " + key + "}\t" + "With " + missList.Count + "missing\t" + diffList.Count + " data in " + gfsServerName + " and " +
 									 osiServerName);
 						sw.WriteLine("\tSamples (up to 5):");
 						int i = 0;

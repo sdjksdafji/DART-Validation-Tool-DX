@@ -32,7 +32,7 @@ namespace DART_Validation_Tool_DX
 			InitializeComponent();
 		}
 
-		public void clearStat()
+		public void ClearStat()
 		{
 			lock (this.statSemaphore)
 			{
@@ -41,24 +41,23 @@ namespace DART_Validation_Tool_DX
 			}
 		}
 
-		public void increaseMatched()
+		public void IncreaseMatched()
 		{
 			lock (this.statSemaphore)
 			{
 				this.numMatched++;
 			}
-			this.updateChart();
+			this.UpdateChart();
 		}
 
-		public void increaseUnmatched()
-		{
+		public void IncreaseUnmatched(){
 			lock (this.statSemaphore)
 			{
 				this.numUnmathed++;
 			}
-			this.updateChart();
+			this.UpdateChart();
 		}
-		private void connectButton_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+		private void ConnectButton_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 		{
 			if (this.osiTextInput.EditValue != null)
 			{
@@ -73,16 +72,16 @@ namespace DART_Validation_Tool_DX
 			}
 		}
 
-		private void metricsBox_EditValueChanged(object sender, EventArgs e)
+		private void MetricsBox_EditValueChanged(object sender, EventArgs e)
 		{
-			this.clearStat(); if (metricsBox.EditValue != null && gfsServerInfo != null)
+			this.ClearStat(); if (metricsBox.EditValue != null && gfsServerInfo != null)
 			{
 				(new GetInstances()).BeginGetInstancesForMetric(gfsServerInfo, metricsBox.EditValue.ToString(), this);
 			}
 		}
-		private void barButtonItem1_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+		private void BarButtonItem1_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 		{
-			this.clearStat();
+			this.ClearStat();
 			if (gfsServerInfo != null && osiServerInfo != null && metricsBox.EditValue != null && instancesBox.EditValue != null)
 			{
 				if (instancesBox.EditValue.ToString().Equals("All Instances"))
@@ -92,7 +91,7 @@ namespace DART_Validation_Tool_DX
 					chartTitle1.Text = this.metricsBox.EditValue + " Validation Result";
 					this.resultChart.Titles.Add(chartTitle1);
 					this.resultChart.Visible = true;
-					this.diffResult.Visible = false;
+					this.MainSplitContainerControl.Visible = false;
 					ComboBoxItemCollection instances = (instancesBox.Edit as RepositoryItemComboBox).Items;
 					foreach (var item in instances)
 					{
@@ -101,13 +100,12 @@ namespace DART_Validation_Tool_DX
 						compareDataSeires.isAllInstances = true;
 						compareDataSeires.BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), item.ToString(), false, this);
 						compareDataSeires.BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), item.ToString(), true, this);
-					}
-					Console.WriteLine("all");
+					}Console.WriteLine("all");
 				}
 				else
 				{
 					this.resultChart.Visible = false;
-					this.diffResult.Visible = true;
+					this.MainSplitContainerControl.Visible = true;
 					GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
 					compareDataSeires.isAllInstances = false;
 					compareDataSeires.BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), false, this);
@@ -116,23 +114,22 @@ namespace DART_Validation_Tool_DX
 			}
 		}
 
-		private void gfsTextInput_EditValueChanged(object sender, EventArgs e)
+		private void GfsTextInputEditValueChanged(object sender, EventArgs e)
 		{
-			clearMetricsListAndInstancesList();
+			ClearMetricsListAndInstancesList();
 		}
 
 
-		private void osiTextInput_EditValueChanged(object sender, EventArgs e)
+		private void OsiTextInputEditValueChanged(object sender, EventArgs e)
 		{
-			clearMetricsListAndInstancesList();
+			ClearMetricsListAndInstancesList();
 		}
 
 
 
 
 
-
-		private void clearMetricsListAndInstancesList()
+		private void ClearMetricsListAndInstancesList()
 		{
 			(this.metricsBox.Edit as RepositoryItemComboBox).Items.Clear();
 			(this.instancesBox.Edit as RepositoryItemComboBox).Items.Clear();
@@ -140,16 +137,17 @@ namespace DART_Validation_Tool_DX
 			this.gfsServerInfo = null;
 		}
 
-		private void updateChart()
+		private void UpdateChart()
 		{
 			this.resultChart.Series.Clear();
 			Series series = new Series(this.metricsBox.EditValue + "Validation Result", ViewType.Pie3D);
-			// Populate the series with points.
-			series.Points.Add(new SeriesPoint("Matched", this.numMatched));
+			// Populate the series with points.series.Points.Add(new SeriesPoint("Matched", this.numMatched));
 			series.Points.Add(new SeriesPoint("Unmatch", this.numUnmathed));
+			series.Points.Add(new SeriesPoint("Matched", this.numMatched));
 
 			series.PointOptions.ValueNumericOptions.Format = NumericFormat.Percent;
 
+			series.Label.PointOptions.Pattern = "{A} - {V}";
 			// Add the series to the chart.
 			this.resultChart.Series.Add(series);
 		}

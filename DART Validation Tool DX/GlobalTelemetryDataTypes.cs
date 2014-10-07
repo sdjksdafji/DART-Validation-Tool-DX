@@ -10,18 +10,18 @@ namespace Microsoft.Office.Web.Datacenter.Telemetry
 {
 
 	public class DataSeries : IEqualityComparer<DataSeries>
-    {
-        [DataMember]
-        public DateTime StartTime { get; set; }
+	{
+		[DataMember]
+		public DateTime StartTime { get; set; }
 
-        [DataMember]
-        public DateTime EndTime { get; set; }
+		[DataMember]
+		public DateTime EndTime { get; set; }
 
-        [DataMember]
-        public TimeSpan Interval { get; set; }
+		[DataMember]
+		public TimeSpan Interval { get; set; }
 
-        [DataMember]
-        public double[] Values { get; set; }
+		[DataMember]
+		public double[] Values { get; set; }
 
 		public bool Equals(DataSeries x, DataSeries y)
 		{
@@ -56,119 +56,126 @@ namespace Microsoft.Office.Web.Datacenter.Telemetry
 			DateTime currentTime = new DateTime(StartTime.Ticks);
 			StringBuilder sb = new StringBuilder();
 			sb.AppendLine("Values: ");
-			foreach (double value in Values)
+			if (Values != null)
 			{
-				sb.Append(currentTime.ToString());
-				sb.Append(": ");
-				sb.AppendLine(value.ToString());
-				currentTime = currentTime.Add(this.Interval);
+				foreach (double value in Values)
+				{
+					sb.Append(currentTime.ToString());
+					sb.Append(": ");
+					sb.AppendLine(value.ToString());
+					currentTime = currentTime.Add(this.Interval);
+				}
 			}
 			return sb.ToString();
 		}
 
-		public List<Tuple<DateTime, String>> ToTupleList(){
+		public List<Tuple<DateTime, String>> ToTupleList()
+		{
 			List<Tuple<DateTime, String>> returnVal = new List<Tuple<DateTime, String>>();
 			DateTime currentTime = new DateTime(StartTime.Ticks);
-			foreach (double value in Values)
+			if (Values != null)
 			{
-				returnVal.Add(new Tuple<DateTime, String>(new DateTime(currentTime.Ticks), value.ToString()));
-				currentTime = currentTime.Add(this.Interval);
+				foreach (double value in Values)
+				{
+					returnVal.Add(new Tuple<DateTime, String>(new DateTime(currentTime.Ticks), value.ToString()));
+					currentTime = currentTime.Add(this.Interval);
+				}
 			}
 			return returnVal;
 		}
-    }
+	}
 
 
-    [DataContract]
-    public class Instance
-    {
-        [DataMember]
-        public string Name { get; set; }
+	[DataContract]
+	public class Instance
+	{
+		[DataMember]
+		public string Name { get; set; }
 
-        [DataMember]
-        public string[] AdditionalDimensions { get; set; }
+		[DataMember]
+		public string[] AdditionalDimensions { get; set; }
 
-        [DataMember]
-        public DateTime LastDataPointTime { get; set; }
+		[DataMember]
+		public DateTime LastDataPointTime { get; set; }
 
-        [DataMember]
-        public double LastDataPointValue { get; set; }
-    }
+		[DataMember]
+		public double LastDataPointValue { get; set; }
+	}
 
-    [DataContract]
-    public class Metric : IComparable<Metric>
-    {
-        [DataMember]
-        public string Name { get; set; }
+	[DataContract]
+	public class Metric : IComparable<Metric>
+	{
+		[DataMember]
+		public string Name { get; set; }
 
-        [DataMember]
-        public string Stream { get; set; }
+		[DataMember]
+		public string Stream { get; set; }
 
-        [DataMember]
-        public string[] StreamFilter { get; set; }
+		[DataMember]
+		public string[] StreamFilter { get; set; }
 
-        [DataMember]
-        public string[] DimensionNames { get; set; }
+		[DataMember]
+		public string[] DimensionNames { get; set; }
 
-        // This is not included in the original web service response; we fill it in later
-        public Dimension[] Dimensions { get; set; }
+		// This is not included in the original web service response; we fill it in later
+		public Dimension[] Dimensions { get; set; }
 
-        [DataMember]
-        public double MinValue { get; set; }
+		[DataMember]
+		public double MinValue { get; set; }
 
-        [DataMember]
-        public double MaxValue { get; set; }
+		[DataMember]
+		public double MaxValue { get; set; }
 
-        [DataMember]
-        public string Category { get; set; }
+		[DataMember]
+		public string Category { get; set; }
 
-        [DataMember]
-        public string Description { get; set; }
+		[DataMember]
+		public string Description { get; set; }
 
-        // This really ought to just be part of the structure we get from the server; for now infer it
-        public bool DisplayValuesAsPercentages { get { return MinValue == 0 && MaxValue == 1; } }
+		// This really ought to just be part of the structure we get from the server; for now infer it
+		public bool DisplayValuesAsPercentages { get { return MinValue == 0 && MaxValue == 1; } }
 
-        public int CompareTo(Metric other)
-        {
-            // sort case insensitive within category path depth
+		public int CompareTo(Metric other)
+		{
+			// sort case insensitive within category path depth
 
-            string sourceCategory = Category ?? string.Empty;
-            string otherCategory = other.Category ?? string.Empty;
+			string sourceCategory = Category ?? string.Empty;
+			string otherCategory = other.Category ?? string.Empty;
 
-            return String.Compare(
-                sourceCategory + " " + Name,
-                otherCategory + " " + other.Name,
-                StringComparison.OrdinalIgnoreCase);
-        }
-    }
+			return String.Compare(
+				sourceCategory + " " + Name,
+				otherCategory + " " + other.Name,
+				StringComparison.OrdinalIgnoreCase);
+		}
+	}
 
-    public class Dimension
-    {
-        [DataMember]
-        public string Name { get; set; }
+	public class Dimension
+	{
+		[DataMember]
+		public string Name { get; set; }
 
-        [DataMember]
-        public Dictionary<string, string> ValueNames { get; set; }
+		[DataMember]
+		public Dictionary<string, string> ValueNames { get; set; }
 
-        // This is not included in the original web service response; we fill it in on demand
-        private Dictionary<string, string> _inverseValueNames;
-        public Dictionary<string, string> InverseValueNames
-        {
-            get
-            {
-                if (_inverseValueNames != null)
-                    return _inverseValueNames;
+		// This is not included in the original web service response; we fill it in on demand
+		private Dictionary<string, string> _inverseValueNames;
+		public Dictionary<string, string> InverseValueNames
+		{
+			get
+			{
+				if (_inverseValueNames != null)
+					return _inverseValueNames;
 
-                _inverseValueNames = new Dictionary<string, string>();
-                foreach (KeyValuePair<string, string> kvp in ValueNames)
-                {
-                    // We presume there is a 1-1 mapping between keys and values
-                    _inverseValueNames[kvp.Value] = kvp.Key;
-                }
-                return _inverseValueNames;
-            }
-        }
-    }
+				_inverseValueNames = new Dictionary<string, string>();
+				foreach (KeyValuePair<string, string> kvp in ValueNames)
+				{
+					// We presume there is a 1-1 mapping between keys and values
+					_inverseValueNames[kvp.Value] = kvp.Key;
+				}
+				return _inverseValueNames;
+			}
+		}
+	}
 
 }
 

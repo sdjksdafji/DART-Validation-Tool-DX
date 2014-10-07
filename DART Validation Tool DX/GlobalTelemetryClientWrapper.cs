@@ -93,20 +93,25 @@ namespace DART_Validation_Tool_DX
 		{
 			//this.osiData = this.osiDataSeries.DataSeriesListToString();
 			//this.gfsData = this.gfsDataSeries.DataSeriesListToString();
-			List<Tuple<DateTime, String, String>> diffList = this.osiDataSeries.diffDataSeriesList(this.gfsDataSeries);
+			var diffResult = this.osiDataSeries.DiffDataSeriesList(this.gfsDataSeries);
+			if (diffResult == null) return;
+			List<Tuple<DateTime, String, String>> matchList = diffResult.Item1;
+			List<Tuple<DateTime, String, String>> diffList = diffResult.Item2;
+			List<Tuple<DateTime, String, String>> missingList = diffResult.Item2;
 			Boolean match = diffList.Count == 0;
 			if (match)
-				control.increaseMatched();
+				control.IncreaseMatched();
 			else
-				control.increaseUnmatched();
+				control.IncreaseUnmatched();
 			if (!this.isAllInstances)
 			{
-				DevExpress.XtraEditors.XtraMessageBox.Show(match ? "Match" : "Unmach", "Result", MessageBoxButtons.OK,
+				DevExpress.XtraEditors.XtraMessageBox.Show((match ? "Match" : "Unmach") + "!\nWith " + missingList.Count + " missing values.", "Result", MessageBoxButtons.OK,
 					match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-				control.diffResult.DataSource = diffList;
+				control.diffResult.DataSource = diffList.NormalizeDateTimeToString();
+				control.MatchResult.DataSource = matchList.NormalizeDateTimeToString();
 			}
 			LogInfo.WriteComparisonToLog(key, control.osiTextInput.EditValue.ToString(),
-				control.gfsTextInput.EditValue.ToString(), diffList, this.osiDataSeries.First().Values.Length,
+				control.gfsTextInput.EditValue.ToString(), matchList, diffList, missingList, this.osiDataSeries.First().Values.Length,
 				this.gfsDataSeries.First().Values.Length);
 			this.gfsDataSeries = null;
 			this.osiDataSeries = null;
@@ -177,7 +182,7 @@ namespace DART_Validation_Tool_DX
 		{
 			String url = "/instances?metric=" + metricName;
 			HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl(url)) as HttpWebRequest;
-			request.BeginGetResponse(EndGetInstancesForMetric, new GetInstancesRequest { HttpWebRequest = request,Control = control  });
+			request.BeginGetResponse(EndGetInstancesForMetric, new GetInstancesRequest { HttpWebRequest = request, Control = control });
 		}
 
 		// update GUI for instances list

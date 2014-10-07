@@ -28,12 +28,12 @@ namespace DART_Validation_Tool_DX
 			public HttpWebRequest HttpWebRequest { get; set; }
 		}
 
-		public void BeginGetDataSeries(ServerInfo server, String metricName, String instanceName, Boolean isOsiDart,
+		public async void BeginGetDataSeriesAsync(ServerInfo server, String metricName, String instanceName, Boolean isOsiDart,
 			MainGuiForm control)
 		{
 			String url = "/dataseries?key=" + metricName + "!" + instanceName;
 			HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl(url)) as HttpWebRequest;
-			request.BeginGetResponse(EndGetDataSeries,
+			request.BeginGetResponse(EndGetDataSeriesAsync,
 				new GetDataSeriesRequest
 				{
 					HttpWebRequest = request,
@@ -42,8 +42,7 @@ namespace DART_Validation_Tool_DX
 					key = "Metric: " + metricName + " Instance: " + instanceName
 				});
 		}
-
-		private void EndGetDataSeries(IAsyncResult async)
+		private async void EndGetDataSeriesAsync(IAsyncResult async)
 		{
 			GetDataSeriesRequest request = async.AsyncState as GetDataSeriesRequest;
 			try

@@ -98,8 +98,8 @@ namespace DART_Validation_Tool_DX
 						if (item.ToString().Equals("All Instances")) continue;
 						GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
 						compareDataSeires.isAllInstances = true;
-						compareDataSeires.BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), item.ToString(), false, this);
-						compareDataSeires.BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), item.ToString(), true, this);
+						compareDataSeires.BeginGetDataSeriesAsync(gfsServerInfo, metricsBox.EditValue.ToString(), item.ToString(), false, this);
+						compareDataSeires.BeginGetDataSeriesAsync(osiServerInfo, metricsBox.EditValue.ToString(), item.ToString(), true, this);
 					}Console.WriteLine("all");
 				}
 				else
@@ -108,8 +108,8 @@ namespace DART_Validation_Tool_DX
 					this.MainSplitContainerControl.Visible = true;
 					GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
 					compareDataSeires.isAllInstances = false;
-					compareDataSeires.BeginGetDataSeries(gfsServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), false, this);
-					compareDataSeires.BeginGetDataSeries(osiServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), true, this);
+					compareDataSeires.BeginGetDataSeriesAsync(gfsServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), false, this);
+					compareDataSeires.BeginGetDataSeriesAsync(osiServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), true, this);
 				}
 			}
 		}

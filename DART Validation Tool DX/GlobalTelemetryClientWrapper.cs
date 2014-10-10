@@ -96,7 +96,7 @@ namespace DART_Validation_Tool_DX
 			if (diffResult == null) return;
 			List<Tuple<DateTime, String, String>> matchList = diffResult.Item1;
 			List<Tuple<DateTime, String, String>> diffList = diffResult.Item2;
-			List<Tuple<DateTime, String, String>> missingList = diffResult.Item2;
+			List<Tuple<DateTime, String, String>> missingList = diffResult.Item3;
 			Boolean match = diffList.Count == 0;
 			if (match)
 				control.IncreaseMatched();

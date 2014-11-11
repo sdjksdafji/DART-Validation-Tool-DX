@@ -70,8 +70,8 @@ namespace DART_Validation_Tool_DX
 						int i = 0;
 						foreach (Tuple<DateTime, String, String> tuple in missList)
 						{
-							sw.WriteLine("\tTime: " + tuple.Item1 + "\t" + gfsServerName + ": " + tuple.Item2 + " instances\t" +
-										 osiServerName + ": " + tuple.Item3 + " instances");
+							sw.WriteLine("\tTime: " + tuple.Item1 + "\t" + gfsServerName + ": [" + tuple.Item2 + "]\t" +
+										 osiServerName + ": [" + tuple.Item3 + "]");
 							if (++i >= 15)
 							{
 								break;

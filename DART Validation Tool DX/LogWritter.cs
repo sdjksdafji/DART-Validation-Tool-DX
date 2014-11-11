@@ -48,8 +48,7 @@ namespace DART_Validation_Tool_DX
 					{
 						sw.WriteLine("-- Matched --: { key = " + key + "}\t" + "With " + missList.Count + " missing.\t Compared " + matchList.Count + " data in " + gfsServerName + " and " +
 									 osiServerName);
-					}
-					else
+					}else
 					{
 						sw.WriteLine("!! Unmatched !!: { key = " + key + "}\t" + "With " + missList.Count + " missing.\t Compared " + (diffList.Count + matchList.Count) + " data in " + gfsServerName + " and " +
 									 osiServerName + ". There are " + diffList.Count + " unmatched datapoints and " + matchList.Count + " matched datapoints.");
@@ -57,8 +56,8 @@ namespace DART_Validation_Tool_DX
 						int i = 0;
 						foreach (Tuple<DateTime, String, String> tuple in diffList)
 						{
-							sw.WriteLine("\tTime: " + tuple.Item1 + "\t" + gfsServerName + ": " + tuple.Item2 + " instances\t" +
-										 osiServerName + ": " + tuple.Item3 + " instances");
+							sw.WriteLine("\tTime: " + tuple.Item1 + "\t" + gfsServerName + ": [" + tuple.Item2 + "]\t" +
+										 osiServerName + ": [" + tuple.Item3 + "]");
 							if (++i >= 15)
 							{
 								break;

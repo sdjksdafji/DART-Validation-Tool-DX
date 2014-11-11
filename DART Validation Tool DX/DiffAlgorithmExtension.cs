@@ -41,6 +41,18 @@ namespace DART_Validation_Tool_DX
 					var iterGfs = gfsDataSeries.GetEnumerator();
 					iterOsi.MoveNext();
 					iterGfs.MoveNext();
+					if (GetAndCompareDataSeires.OnlyCompareLast15MinData)
+					{
+						DateTime now = DateTime.UtcNow;
+						while (iterOsi.Current != null && (now - iterOsi.Current.Item1).TotalMinutes > 15)
+						{
+							iterOsi.MoveNext();
+						}
+						while (iterGfs.Current != null && (now - iterGfs.Current.Item1).TotalMinutes > 15)
+						{
+							iterGfs.MoveNext();
+						}
+					}
 					while (true)
 					{
 						// if one of the list has been iterated

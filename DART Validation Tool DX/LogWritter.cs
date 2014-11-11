@@ -12,12 +12,26 @@ namespace DART_Validation_Tool_DX
 	{
 		private static Object logLock = new Object();
 
+		public static String FileName { get; set; }
+
 		private static String GetLogPath()
 		{
 			String path = @"log";
 			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-			path += @"\log.txt";
+			path += "\\"+ FileName + ".txt";
 			return path;
+		}
+
+		public static void WriteInstancesNotMatchToLog(String metric)
+		{
+			String path = GetLogPath();
+			lock (logLock)
+			{
+				using (StreamWriter sw = File.AppendText(path))
+				{
+					sw.WriteLine(@"!! Unmatched !!: The instances for " + metric + " are NOT same");
+				}
+			}
 		}
 
 		public static void WriteComparisonToLog(String key, String osiServerName, String gfsServerName, List<Tuple<DateTime, String, String>> matchList,

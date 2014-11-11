@@ -17,52 +17,24 @@ namespace DART_Validation_Tool_DX
 	{
 		public Boolean isAllInstances { get; set; }
 
+		public static Boolean OnlyCompareLast15MinData { get; set; }
+
 		private List<DataSeries> osiDataSeries = null;
 		private List<DataSeries> gfsDataSeries = null;
 		private Object semaphore = new Object();
 
-
-		// private helper class
-		private class GetInstancesRequest
-		{
-			public HttpWebRequest HttpWebRequest { get; set; }
-		}
-
-		public async void BeginGetDataSeriesAsync(ServerInfo server, String metricName, String instanceName, Boolean isOsiDart,
+		public void GetAndCompareDataSeries(ServerInfo server, String metricName, String instanceName, Boolean isOsiDart,
 			MainGuiForm control)
 		{
 			String url = "/dataseries?key=" + metricName + "!" + instanceName;
 			HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl(url)) as HttpWebRequest;
-			request.BeginGetResponse(EndGetDataSeriesAsync,
-				new GetDataSeriesRequest
-				{
-					HttpWebRequest = request,
-					isOsiDart = isOsiDart,
-					control = control,
-					key = "Metric: " + metricName + " Instance: " + instanceName
-				});
-		}
-		private async void EndGetDataSeriesAsync(IAsyncResult async)
-		{
-			GetDataSeriesRequest request = async.AsyncState as GetDataSeriesRequest;
-			try
-			{
-				HttpWebResponse response = request.HttpWebRequest.EndGetResponse(async) as HttpWebResponse;
-				Stream stream = response.GetResponseStream();
 
-				DataContractSerializer serializer = new DataContractSerializer(typeof(List<DataSeries>));
-				List<DataSeries> dataSeriesList = (List<DataSeries>)serializer.ReadObject(stream);
+			Stream stream = request.GetResponse().GetResponseStream();
 
-				request.control.Invoke(new MethodInvoker(() =>
-				{
-					compareTwoDataSeries(dataSeriesList, request.isOsiDart, request.control, request.key);
-				}));
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.ToString());
-				LogInfo.WriteExceptionToLog(e);
-			}
+			DataContractSerializer serializer = new DataContractSerializer(typeof(List<DataSeries>));
+			List<DataSeries> dataSeriesList = (List<DataSeries>)serializer.ReadObject(stream);
+			compareTwoDataSeries(dataSeriesList, isOsiDart, control, "Metric: " + metricName + " Instance: " + instanceName);
+
 		}
 
 		private void compareTwoDataSeries(List<DataSeries> dataSeriesList, Boolean isOsiDart, MainGuiForm control, String key)
@@ -90,30 +62,37 @@ namespace DART_Validation_Tool_DX
 
 		private void displayResult(MainGuiForm control, String key)
 		{
-			//this.osiData = this.osiDataSeries.DataSeriesListToString();
-			//this.gfsData = this.gfsDataSeries.DataSeriesListToString();
-			var diffResult = this.osiDataSeries.DiffDataSeriesList(this.gfsDataSeries);
-			if (diffResult == null) return;
-			List<Tuple<DateTime, String, String>> matchList = diffResult.Item1;
-			List<Tuple<DateTime, String, String>> diffList = diffResult.Item2;
-			List<Tuple<DateTime, String, String>> missingList = diffResult.Item3;
-			Boolean match = diffList.Count == 0;
-			if (match)
-				control.IncreaseMatched();
-			else
-				control.IncreaseUnmatched();
-			if (!this.isAllInstances)
+			try
 			{
-				DevExpress.XtraEditors.XtraMessageBox.Show((match ? "Match" : "Unmach") + "!\nWith " + missingList.Count + " missing values.", "Result", MessageBoxButtons.OK,
-					match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-				control.diffResult.DataSource = diffList.NormalizeDateTimeToString();
-				control.MatchResult.DataSource = matchList.NormalizeDateTimeToString();
+				var diffResult = this.osiDataSeries.DiffDataSeriesList(this.gfsDataSeries);
+				if (diffResult == null) return;
+				List<Tuple<DateTime, String, String>> matchList = diffResult.Item1;
+				List<Tuple<DateTime, String, String>> diffList = diffResult.Item2;
+				List<Tuple<DateTime, String, String>> missingList = diffResult.Item3;
+				Boolean match = diffList.Count == 0;
+				if (match) control.IncreaseMatched();
+				else
+					control.IncreaseUnmatched();
+				if (!this.isAllInstances)
+				{
+					DevExpress.XtraEditors.XtraMessageBox.Show(
+						(match ? "Match" : "Unmach") + "!\nWith " + missingList.Count + " missing values.", "Result", MessageBoxButtons.OK,
+						match ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+					control.diffResult.DataSource = diffList.NormalizeDateTimeToString();
+					control.MatchResult.DataSource = matchList.NormalizeDateTimeToString();
+				}
+				LogInfo.WriteComparisonToLog(key, control.osiTextInput.EditValue.ToString(),
+					control.gfsTextInput.EditValue.ToString(), matchList, diffList, missingList,
+					this.osiDataSeries.First().Values.Length,
+					this.gfsDataSeries.First().Values.Length);
+				this.gfsDataSeries = null;
+				this.osiDataSeries = null;
 			}
-			LogInfo.WriteComparisonToLog(key, control.osiTextInput.EditValue.ToString(),
-				control.gfsTextInput.EditValue.ToString(), matchList, diffList, missingList, this.osiDataSeries.First().Values.Length,
-				this.gfsDataSeries.First().Values.Length);
-			this.gfsDataSeries = null;
-			this.osiDataSeries = null;
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+				LogInfo.WriteExceptionToLog(ex);
+			}
 		}
 
 		// private helper class
@@ -147,12 +126,14 @@ namespace DART_Validation_Tool_DX
 				DataContractSerializer serializer = new DataContractSerializer(typeof(List<Metric>));
 				List<Metric> metrics = (List<Metric>)serializer.ReadObject(stream);
 
+				var t = from m in metrics orderby m.Name select m;
+
 				request.Control.Invoke(new MethodInvoker(() =>
 				{
-					(request.Control.metricsBox.Edit as RepositoryItemComboBox).Items.Clear();
-					foreach (Metric metric in metrics)
+					(request.Control.metricsBox.Edit as RepositoryItemCheckedComboBoxEdit).Items.Clear();
+					foreach (Metric metric in t)
 					{
-						(request.Control.metricsBox.Edit as RepositoryItemComboBox).Items.Add(metric.Name);
+						(request.Control.metricsBox.Edit as RepositoryItemCheckedComboBoxEdit).Items.Add(metric.Name);
 					}
 				}));
 
@@ -176,39 +157,68 @@ namespace DART_Validation_Tool_DX
 
 	public class GetInstances
 	{
+		private Object locker =new Object();
+		private List<String> instancesStored = null;
+		private String metricName = "";
 		// Get instances list of a metrics
-		public void BeginGetInstancesForMetric(ServerInfo server, String metricName, MainGuiForm control)
+		public void GetInstancesForMetric(ServerInfo server, ServerInfo server2, String metricName, MainGuiForm control)
 		{
 			String url = "/instances?metric=" + metricName;
+			this.metricName = metricName;
 			HttpWebRequest request = WebRequest.Create(server.GetFullRequestUrl(url)) as HttpWebRequest;
-			request.BeginGetResponse(EndGetInstancesForMetric, new GetInstancesRequest { HttpWebRequest = request, Control = control });
+			HttpWebRequest request2 = WebRequest.Create(server2.GetFullRequestUrl(url)) as HttpWebRequest;
+			ResolveRequest(request, control);
+			ResolveRequest(request2, control);
 		}
 
 		// update GUI for instances list
-		private void EndGetInstancesForMetric(IAsyncResult async)
+		private void ResolveRequest(HttpWebRequest request, MainGuiForm control)
 		{
-			GetInstancesRequest request = async.AsyncState as GetInstancesRequest;
 			try
 			{
-				HttpWebResponse response = request.HttpWebRequest.EndGetResponse(async) as HttpWebResponse;
-				Stream stream = response.GetResponseStream();
+				Stream stream = request.GetResponse().GetResponseStream();
 
 				DataContractSerializer serializer = new DataContractSerializer(typeof(List<Instance>));
 				List<Instance> instances = (List<Instance>)serializer.ReadObject(stream);
 
-				request.Control.Invoke(new MethodInvoker(() =>
+				var temp = new List<String>();
+				foreach (Instance instance in instances)
 				{
-					(request.Control.instancesBox.Edit as RepositoryItemComboBox).Items.Clear();
-					(request.Control.instancesBox.Edit as RepositoryItemComboBox).Items.Add("All Instances");
-					foreach (Instance instance in instances)
+					temp.Add(instance.Name);
+				}
+
+				lock (locker)
+				{
+					if (instancesStored == null)
 					{
-						(request.Control.instancesBox.Edit as RepositoryItemComboBox).Items.Add(instance.Name);
+						instancesStored = temp;
 					}
-				}));
+					else
+					{
+						var diff1 = instancesStored.Except(temp);
+						var diff2 = temp.Except(instancesStored);
+						if (diff1.Count() != 0 || diff2.Count() != 0)
+						{
+							LogInfo.WriteInstancesNotMatchToLog(this.metricName);
+							DevExpress.XtraEditors.XtraMessageBox.Show("Instances Lists of " + metricName+" Not Same", "Result", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						}
+						var common = from x in instancesStored
+							join y in temp on x equals y
+							select x;
+						control.Invoke(new MethodInvoker(() =>
+						{
+							(control.instancesBox.Edit as RepositoryItemComboBox).Items.Clear();
+							(control.instancesBox.Edit as RepositoryItemComboBox).Items.Add("All Instances");
+							foreach (String instance in common)
+							{
+								(control.instancesBox.Edit as RepositoryItemComboBox).Items.Add(instance);
+							}
+						}));
+					}
+				}
 			}
 			catch (Exception e)
-			{
-				Console.WriteLine(e.ToString());
+			{Console.WriteLine(e.ToString());
 				LogInfo.WriteExceptionToLog(e);
 			}
 		}

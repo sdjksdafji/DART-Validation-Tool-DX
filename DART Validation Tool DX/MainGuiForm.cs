@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Net;
 using System.IO;
@@ -50,7 +51,8 @@ namespace DART_Validation_Tool_DX
 			this.UpdateChart();
 		}
 
-		public void IncreaseUnmatched(){
+		public void IncreaseUnmatched()
+		{
 			lock (this.statSemaphore)
 			{
 				this.numUnmathed++;
@@ -72,44 +74,71 @@ namespace DART_Validation_Tool_DX
 			}
 		}
 
-		private void MetricsBox_EditValueChanged(object sender, EventArgs e)
-		{
-			this.ClearStat(); if (metricsBox.EditValue != null && gfsServerInfo != null)
-			{
-				(new GetInstances()).BeginGetInstancesForMetric(gfsServerInfo, metricsBox.EditValue.ToString(), this);
-			}
-		}
 		private void BarButtonItem1_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 		{
+			GetAndCompareDataSeires.OnlyCompareLast15MinData = (bool) Latest15MinCheck.EditValue;
+			String logFilename = DateTime.Now.ToString().Replace('/', ' ').Replace(':', ' ');
+			LogInfo.FileName = logFilename;
 			this.ClearStat();
-			if (gfsServerInfo != null && osiServerInfo != null && metricsBox.EditValue != null && instancesBox.EditValue != null)
+			var selectedMetrics = (metricsBox.Edit as RepositoryItemCheckedComboBoxEdit).GetCheckedItems().ToString().Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			if (gfsServerInfo != null && osiServerInfo != null && selectedMetrics != null)
 			{
-				if (instancesBox.EditValue.ToString().Equals("All Instances"))
+				if (selectedMetrics.Count() > 1) //multiple metrics
 				{
 					this.resultChart.Titles.Clear();
 					ChartTitle chartTitle1 = new ChartTitle();
-					chartTitle1.Text = this.metricsBox.EditValue + " Validation Result";
+					chartTitle1.Text = "Validation Result";
 					this.resultChart.Titles.Add(chartTitle1);
 					this.resultChart.Visible = true;
 					this.MainSplitContainerControl.Visible = false;
-					ComboBoxItemCollection instances = (instancesBox.Edit as RepositoryItemComboBox).Items;
-					foreach (var item in instances)
+					foreach (String metricsName in selectedMetrics)
 					{
-						if (item.ToString().Equals("All Instances")) continue;
-						GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
-						compareDataSeires.isAllInstances = true;
-						compareDataSeires.BeginGetDataSeriesAsync(gfsServerInfo, metricsBox.EditValue.ToString(), item.ToString(), false, this);
-						compareDataSeires.BeginGetDataSeriesAsync(osiServerInfo, metricsBox.EditValue.ToString(), item.ToString(), true, this);
-					}Console.WriteLine("all");
+						(new GetInstances()).GetInstancesForMetric(gfsServerInfo, osiServerInfo, metricsName, this);
+						Thread.Sleep(1000);
+						ComboBoxItemCollection instances = (instancesBox.Edit as RepositoryItemComboBox).Items;
+						foreach (var item in instances)
+						{
+							if (item.ToString().Equals("All Instances")) continue;
+							GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
+							compareDataSeires.isAllInstances = true;
+							compareDataSeires.GetAndCompareDataSeries(gfsServerInfo, metricsName, item.ToString(), false, this);
+							compareDataSeires.GetAndCompareDataSeries(osiServerInfo, metricsName, item.ToString(), true, this);
+						}
+					}
 				}
-				else
+				else if (selectedMetrics.Count() == 1 && instancesBox.EditValue != null) // single metric
 				{
-					this.resultChart.Visible = false;
-					this.MainSplitContainerControl.Visible = true;
-					GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
-					compareDataSeires.isAllInstances = false;
-					compareDataSeires.BeginGetDataSeriesAsync(gfsServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), false, this);
-					compareDataSeires.BeginGetDataSeriesAsync(osiServerInfo, metricsBox.EditValue.ToString(), instancesBox.EditValue.ToString(), true, this);
+					String metricsName = selectedMetrics[0];
+					if (instancesBox.EditValue.ToString().Equals("All Instances"))
+					{
+						this.resultChart.Titles.Clear();
+						ChartTitle chartTitle1 = new ChartTitle();
+						chartTitle1.Text = metricsName + " Validation Result";
+						this.resultChart.Titles.Add(chartTitle1);
+						this.resultChart.Visible = true;
+						this.MainSplitContainerControl.Visible = false;
+						ComboBoxItemCollection instances = (instancesBox.Edit as RepositoryItemComboBox).Items;
+						foreach (var item in instances)
+						{
+							if (item.ToString().Equals("All Instances")) continue;
+							GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
+							compareDataSeires.isAllInstances = true;
+							compareDataSeires.GetAndCompareDataSeries(gfsServerInfo, metricsName, item.ToString(), false, this);
+							compareDataSeires.GetAndCompareDataSeries(osiServerInfo, metricsName, item.ToString(), true, this);
+						}
+						Console.WriteLine("all");
+					}
+					else
+					{
+						this.resultChart.Visible = false;
+						this.MainSplitContainerControl.Visible = true;
+						GetAndCompareDataSeires compareDataSeires = new GetAndCompareDataSeires();
+						compareDataSeires.isAllInstances = false;
+						compareDataSeires.GetAndCompareDataSeries(gfsServerInfo, metricsName, instancesBox.EditValue.ToString(), false,
+							this);
+						compareDataSeires.GetAndCompareDataSeries(osiServerInfo, metricsName, instancesBox.EditValue.ToString(), true,
+							this);
+					}
 				}
 			}
 		}
@@ -131,7 +160,7 @@ namespace DART_Validation_Tool_DX
 
 		private void ClearMetricsListAndInstancesList()
 		{
-			(this.metricsBox.Edit as RepositoryItemComboBox).Items.Clear();
+			(this.metricsBox.Edit as RepositoryItemCheckedComboBoxEdit).Items.Clear();
 			(this.instancesBox.Edit as RepositoryItemComboBox).Items.Clear();
 			this.osiServerInfo = null;
 			this.gfsServerInfo = null;
@@ -140,7 +169,7 @@ namespace DART_Validation_Tool_DX
 		private void UpdateChart()
 		{
 			this.resultChart.Series.Clear();
-			Series series = new Series(this.metricsBox.EditValue + "Validation Result", ViewType.Pie3D);
+			Series series = new Series("Validation Result", ViewType.Pie3D);
 			// Populate the series with points.series.Points.Add(new SeriesPoint("Matched", this.numMatched));
 			series.Points.Add(new SeriesPoint("Unmatch", this.numUnmathed));
 			series.Points.Add(new SeriesPoint("Matched", this.numMatched));
@@ -150,6 +179,21 @@ namespace DART_Validation_Tool_DX
 			series.Label.PointOptions.Pattern = "{A} - {V}";
 			// Add the series to the chart.
 			this.resultChart.Series.Add(series);
+		}
+
+		private void metricsBox_EditValueChanged(object sender, EventArgs e)
+		{
+			this.ClearStat();
+			var selectedMetrics = (metricsBox.Edit as RepositoryItemCheckedComboBoxEdit).GetCheckedItems().ToString().Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+			if (selectedMetrics != null && selectedMetrics.Count() == 1 && gfsServerInfo != null)
+			{
+				(new GetInstances()).GetInstancesForMetric(gfsServerInfo, osiServerInfo, metricsBox.EditValue.ToString(), this);
+				this.instancesBox.Enabled = true;
+			}
+			else
+			{
+				//this.instancesBox.Enabled = false;
+			}
 		}
 
 	}

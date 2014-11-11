@@ -14,8 +14,8 @@ namespace DART_Validation_Tool_DX
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main()
-		{
+		static void Main(){
+			GetAndCompareDataSeires.OnlyCompareLast15MinData = true;
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
